@@ -63,6 +63,7 @@
     q_screen: 'Screen',
     q_high: 'High',
     q_max: 'Max',
+    quality_hint: 'Max saves at the original size — big photos take a little longer',
     save_bg: 'Cutout PNG',
     save_stencil: 'Stencil PNG',
     print: 'Print',
