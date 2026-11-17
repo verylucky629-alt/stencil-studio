@@ -36,11 +36,18 @@
 
 <main class="layout">
   <!-- ================= STAGE ================= -->
-  <section class="stage-wrap">
-    <div class="stage-tabs" role="tablist" aria-label="View">
-      <button class="tab" data-view="original" role="tab" aria-selected="false" data-i18n="view_original">원본</button>
-      <button class="tab" data-view="bg" role="tab" aria-selected="false" data-i18n="view_bg">배경 제거</button>
-      <button class="tab" data-view="stencil" role="tab" aria-selected="true" data-i18n="view_stencil">스텐실</button>
+  <div class="stage-sentinel" id="stageSentinel" aria-hidden="true"></div>
+  <section class="stage-wrap" id="stageWrap">
+    <div class="stage-head">
+      <div class="stage-tabs" role="tablist" aria-label="View">
+        <button class="tab" data-view="original" role="tab" aria-selected="false" data-i18n="view_original">원본</button>
+        <button class="tab" data-view="bg" role="tab" aria-selected="false" data-i18n="view_bg">배경 제거</button>
+        <button class="tab" data-view="stencil" role="tab" aria-selected="true" data-i18n="view_stencil">스텐실</button>
+      </div>
+      <button class="stage-fold" id="stageFoldBtn" type="button" aria-expanded="true" aria-controls="stage" aria-label="미리보기 접기">
+        <span class="fold-txt" data-i18n="fold_preview">접기</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+      </button>
     </div>
 
     <div class="stage mode-checker" id="stage">

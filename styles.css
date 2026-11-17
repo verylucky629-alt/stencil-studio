@@ -19,6 +19,7 @@
   --r-lg:18px;
   --r:14px;
   --r-sm:10px;
+  --topbar-h:58px;
   color-scheme: dark;
 }
 html[data-theme="light"]{
@@ -102,9 +103,12 @@ html[data-theme="light"] .chip .ico-moon{display:block}
   max-width:1560px;margin:0 auto;
   align-items:start;
 }
-.stage-wrap{min-width:0;position:sticky;top:74px}
+.stage-wrap{min-width:0;position:sticky;top:calc(var(--topbar-h) + 14px)}
+.stage-sentinel{display:none;height:0;margin:0;padding:0;border:0;pointer-events:none}
+.stage-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.stage-fold{display:none}
 .stage-tabs{
-  display:inline-flex;gap:4px;padding:4px;margin-bottom:10px;
+  display:inline-flex;gap:4px;padding:4px;
   background:var(--panel);border:1px solid var(--line);border-radius:999px;
 }
 .tab{
@@ -118,7 +122,9 @@ html[data-theme="light"] .chip .ico-moon{display:block}
 .stage{
   position:relative;
   height:calc(100vh - 220px);
+  height:calc(100dvh - var(--topbar-h) - 150px);
   min-height:360px;
+  max-height:900px;
   border-radius:var(--r-lg);
   border:1px solid var(--line);
   overflow:hidden;
@@ -394,14 +400,53 @@ input[type="color"]::-webkit-color-swatch{border:0;border-radius:6px}
   .layout{grid-template-columns:minmax(0,1fr) 340px;gap:14px;padding:14px}
 }
 @media (max-width:900px){
-  .layout{grid-template-columns:1fr;gap:12px;padding:10px 10px 24px}
-  .stage-wrap{position:static}
-  .stage{height:min(56vh,520px);min-height:300px}
-  .stage-tabs{width:100%;justify-content:space-between}
-  .tab{flex:1;text-align:center;padding:8px 6px;font-size:12.5px}
+  .layout{display:block;padding:10px 10px 26px}
+  /* 미리보기가 스크롤해도 상단에 붙어 따라오도록 (모바일) */
+  .stage-wrap{
+    position:sticky;top:var(--topbar-h);z-index:25;
+    margin:0 -10px 12px;padding:8px 10px 6px;
+    background:color-mix(in srgb,var(--bg) 90%,transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(130%);
+    backdrop-filter:blur(12px) saturate(130%);
+    border-bottom:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+  }
+  .stage-wrap.is-stuck{
+    background:color-mix(in srgb,var(--bg) 96%,transparent);
+    border-bottom-color:var(--line);
+    box-shadow:0 14px 26px -20px rgba(0,0,0,.9);
+  }
+  .stage-head{margin-bottom:8px;gap:6px}
+  .stage-sentinel{display:block}
+  .stage-tabs{flex:1;min-width:0;justify-content:space-between}
+  .tab{flex:1;text-align:center;padding:8px 4px;font-size:12.5px}
+  .stage-fold{
+    display:inline-flex;align-items:center;gap:4px;flex:none;
+    height:34px;padding:0 11px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line-2);background:var(--panel);color:var(--muted);
+    font-size:12px;font-weight:650;
+  }
+  .stage-fold svg{transition:transform .2s ease}
+  .stage-fold:active{transform:translateY(1px)}
+  .stage{
+    height:min(52vh,460px);
+    height:min(52dvh,460px);
+    min-height:260px;max-height:none;
+    transition:height .24s ease,min-height .24s ease,opacity .18s ease;
+  }
+  /* 상단에 고정되면 화면을 절반 넘게 가리지 않도록 컴팩트하게 */
+  .stage-wrap.is-stuck .stage{height:min(36vh,300px);height:min(36dvh,300px);min-height:130px}
+  .stage-wrap.is-stuck .stage-head{margin-bottom:6px}
+  .stage-wrap.is-stuck .stage-tabs{padding:3px}
+  .stage-wrap.is-stuck .tab{padding:6px 4px;font-size:12px}
+  .stage-wrap.is-stuck .stage-fold{height:32px}
+  .stage-wrap.is-stuck .stage-bar{margin-top:6px}
+  .stage-wrap.is-stuck .btn.tiny{height:30px}
+  .stage-bar{margin-top:8px}
   .card-head{padding:13px 14px}
   .card-body{padding:0 14px 15px;gap:14px}
   .panel{max-width:640px;margin:0 auto;width:100%}
+  .card{scroll-margin-top:calc(var(--topbar-h) + 46dvh)}
   .brand-txt small{display:none}
   .drop{padding:18px}
   .drop h2{font-size:16px}
@@ -410,7 +455,14 @@ input[type="color"]::-webkit-color-swatch{border:0;border-radius:6px}
 @media (max-width:400px){
   .export-grid{grid-template-columns:1fr}
   .btn.primary,.btn.ghost,.btn.soft{font-size:13px}
-  .stage{height:min(50vh,440px)}
+  .stage{height:min(48vh,400px);height:min(48dvh,400px)}
+  .stage-wrap.is-stuck .stage{height:min(34vh,260px);height:min(34dvh,260px)}
+}
+@media (max-width:900px){
+  /* 수동 접기: 탭 줄과 툴바만 남긴다 (컴퍰트 높이 규칙보다 뒤에 두어 항상 이긴다) */
+  .stage-wrap.is-folded .stage{height:0;min-height:0;opacity:0;border-width:0;pointer-events:none}
+  .stage-wrap.is-folded .stage-bar{margin-top:2px}
+  .stage-wrap.is-folded .stage-fold svg{transform:rotate(180deg)}
 }
 @media (hover:none){
   .btn:hover{filter:none}

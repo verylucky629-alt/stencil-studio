@@ -75,6 +75,8 @@
     too_big: 'That image is too large (max 25MB).',
     heic_err: 'This browser cannot open that HEIC file. Please convert it to JPG first.',
     need_image: 'Load an image first.',
+    fold_preview: 'Collapse',
+    unfold_preview: 'Expand',
     saved: 'Saved to your downloads.',
     sample_err: 'Could not load the sample.',
     picked: 'Colour set to {c}.',
@@ -86,6 +88,8 @@
     too_big: '이미지가 너무 큽니다 (최대 25MB).',
     heic_err: '이 브라우저에서는 이 HEIC 파일을 열 수 없습니다. JPG로 변환해 주세요.',
     need_image: '먼저 이미지를 불러와 주세요.',
+    fold_preview: '접기',
+    unfold_preview: '펼치기',
     saved: '다운로드 폴더에 저장했습니다.',
     sample_err: '샘플 이미지를 불러오지 못했습니다.',
     picked: '색을 {c}로 지정했습니다.',
@@ -135,6 +139,7 @@
       : 'Stencil Studio — 흰 배경 제거 · 스텐실 변환';
     localStorage.setItem('ss.lang', l);
     updateModeHint();
+    syncFoldLabel($('#stageWrap') && $('#stageWrap').classList.contains('is-folded'));
   }
 
   /* ---------------- state ---------------- */
@@ -700,6 +705,92 @@
     }
   }
 
+  /* ---------------- floating preview ---------------- */
+  // 모바일에서는 미리보기가 스크롤해도 상단에 붙어 따라온다.
+  // 붙은 뒤에는 높이를 줄여(컴팩트) 아래 컨트롤을 가리지 않고, 접기 버튼으로 완전히 접을 수도 있다.
+  const floatMQ = window.matchMedia('(max-width:900px)');
+
+  function syncTopbarHeight() {
+    const bar = $('.topbar');
+    if (!bar) return;
+    const h = Math.round(bar.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+  }
+
+  function syncFoldLabel(folded) {
+    const btn = $('#stageFoldBtn');
+    if (!btn) return;
+    const txt = btn.querySelector('.fold-txt');
+    if (txt) txt.textContent = t(folded ? 'unfold_preview' : 'fold_preview');
+    btn.setAttribute('aria-expanded', String(!folded));
+    btn.setAttribute('aria-label', lang === 'en'
+      ? (folded ? 'Expand preview' : 'Collapse preview')
+      : (folded ? '미리보기 펼치기' : '미리보기 접기'));
+  }
+
+  function initFloatingStage() {
+    const wrap = $('#stageWrap');
+    const sentinel = $('#stageSentinel');
+    const foldBtn = $('#stageFoldBtn');
+    if (!wrap || !sentinel) return;
+
+    let raf = 0;
+    let docTop = 0;   // 페이지 최상단 기준 감지선 위치
+
+    function measure() {
+      syncTopbarHeight();
+      docTop = sentinel.getBoundingClientRect().top + window.scrollY;
+    }
+    function evaluate() {
+      raf = 0;
+      if (!floatMQ.matches) { wrap.classList.remove('is-stuck'); return; }
+      const top = parseFloat(getComputedStyle(wrap).top) || 0;
+      const line = docTop - top;
+      const stuck = wrap.classList.contains('is-stuck');
+      // 살짝 넘을 때 붙고, 올라올 때는 여유를 두어 경계에서 떨리지 않게 한다
+      if (!stuck && window.scrollY > line + 24) wrap.classList.add('is-stuck');
+      else if (stuck && window.scrollY < line - 24) wrap.classList.remove('is-stuck');
+    }
+    function onScroll() { if (!raf) raf = requestAnimationFrame(evaluate); }
+    function refresh() { measure(); evaluate(); }
+
+    if (foldBtn) {
+      syncFoldLabel(wrap.classList.contains('is-folded'));
+      foldBtn.addEventListener('click', () => {
+        const folded = wrap.classList.toggle('is-folded');
+        syncFoldLabel(folded);
+        requestAnimationFrame(layoutStage);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', refresh);
+    window.addEventListener('load', refresh);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', refresh);
+    if (floatMQ.addEventListener) floatMQ.addEventListener('change', refresh);
+
+    // 붙음/접힘으로 미리보기 영역 크기가 바뀌면 캔버스 크기도 다시 맞춘다
+    const holder = $('.canvas-holder');
+    if (window.ResizeObserver && holder) {
+      let q = 0;
+      new ResizeObserver(() => {
+        if (q) return;
+        q = requestAnimationFrame(() => { q = 0; layoutStage(); });
+      }).observe(holder);
+    }
+
+    measure();
+    evaluate();
+  }
+
+  // 모바일에선 플로팅 미리보기 아래로 카드를 가져온다
+  function scrollToCard(el) {
+    if (!el) return;
+    if (window.innerWidth > 900) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    const y = el.getBoundingClientRect().top + window.scrollY - Math.round(window.innerHeight * 0.52);
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  }
+
   /* ---------------- wiring ---------------- */
   function bind() {
     collectKo();
@@ -840,7 +931,7 @@
       state.view = v;
       $$('.tab').forEach(x => x.setAttribute('aria-selected', String(x.dataset.view === v)));
       paint();
-      if (window.innerWidth <= 900) $('#panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.innerWidth <= 900) scrollToCard($('#panel'));
     };
     $('#toStencilBtn').addEventListener('click', () => {
       if (!state.bitmap) { toast(t('need_image')); return; }
@@ -849,11 +940,11 @@
       $('#cardSt').classList.remove('is-off');
       goView('stencil');
       runRender();
-      $('#cardSt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      scrollToCard($('#cardSt'));
     });
     $('#toBgBtn').addEventListener('click', () => {
       goView('bg');
-      $('#cardBg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      scrollToCard($('#cardBg'));
     });
 
     // stage tabs
@@ -967,6 +1058,9 @@
     window.addEventListener('keydown', e => {
       if (e.key === 'Escape' && state.eyedrop) setPicking(false);
     });
+
+    // floating preview (mobile sticky + compact + fold)
+    initFloatingStage();
   }
 
   /* ---------------- init ---------------- */
