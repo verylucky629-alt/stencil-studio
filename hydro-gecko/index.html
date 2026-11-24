@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>💧 만성 탈수 탈출 챌린지</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04202f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="수분 게코">
+<meta name="description" content="하루 1,500ml. 마실 때마다 게코가 촉촉해지는 수분 챌린지.">
+<meta property="og:title" content="💧 만성 탈수 탈출 챌린지">
+<meta property="og:description" content="하루 1,500ml. 마실 때마다 게코가 촉촉해지는 수분 챌린지.">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="./style.css">
+<script>window.__errs=[];window.addEventListener('error',function(e){try{window.__errs.push(String((e&&e.message)||e))}catch(_){}});</script>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+  <div class="bubbles" id="bgBubbles"></div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brandDrop">💧</span>
+    <span class="brandText">만성 탈수 탈출</span>
+  </div>
+  <button class="iconBtn" id="soundBtn" type="button" aria-label="소리 켜기/끄기">🔊</button>
+</header>
+
+<main>
+  <section class="hero card">
+    <div class="heroTop">
+      <span class="lvBadge" id="lvBadge">Lv.1</span>
+      <span class="lvName" id="lvName">바싹 마른 선인장</span>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="stageGlow" id="stageGlow"></div>
+      <div class="bubble hidden" id="bubble"></div>
+      <div class="petWrap" id="petWrap">
+        <!-- Lv.1 바싹 마른 선인장 -->
+        <svg class="pet pet1" viewBox="0 0 240 240" role="img" aria-label="바싹 마른 선인장">
+          <defs>
+            <linearGradient id="p1body" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#c3d696"/><stop offset="1" stop-color="#8fa864"/>
+            </linearGradient>
+            <linearGradient id="p1arm" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#b9cf8a"/><stop offset="1" stop-color="#8aa15f"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="120" cy="204" rx="88" ry="16" fill="#05161c" opacity=".45"/>
+          <ellipse cx="120" cy="198" rx="64" ry="16" fill="#5c4632"/>
+          <ellipse cx="120" cy="194" rx="64" ry="14" fill="#73583e"/>
+          <path d="M74 200c8-4 16-4 24 0M150 202c8-4 16-3 22 2" stroke="#4a3826" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>
+          <path d="M120 66c-19 0-28 14-28 34v56c0 18 12 26 28 26s28-8 28-26V100c0-20-9-34-28-34z" fill="url(#p1body)"/>
+          <path d="M120 70v108" stroke="#7d944f" stroke-width="3" opacity=".55" stroke-linecap="round"/>
+          <path d="M108 76v92M132 76v92" stroke="#7d944f" stroke-width="2.4" opacity=".35" stroke-linecap="round"/>
+          <path d="M94 132c-18 0-26 8-26 20 0 10 6 16 15 16" fill="none" stroke="url(#p1arm)" stroke-width="15" stroke-linecap="round"/>
+          <path d="M146 120c20 0 28-6 28-18 0-9-6-14-13-14" fill="none" stroke="url(#p1arm)" stroke-width="15" stroke-linecap="round"/>
+          <g stroke="#f4f0c8" stroke-width="2.2" stroke-linecap="round" opacity=".85">
+            <path d="M90 108l-5-4M92 120l-6-1M88 146l-5 3M148 96l5-4M152 108l6 0M150 150l5 3M120 60l0-5"/>
+          </g>
+          <path d="M109 116c3 5 7 5 10 0" fill="none" stroke="#3a3122" stroke-width="3.6" stroke-linecap="round"/>
+          <path d="M130 116c3 5 7 5 10 0" fill="none" stroke="#3a3122" stroke-width="3.6" stroke-linecap="round"/>
+          <path d="M113 138c4-4 10-4 14 0" fill="none" stroke="#3a3122" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M119 99c3-3 7-3 10 0" fill="none" stroke="#3a3122" stroke-width="2.6" stroke-linecap="round" opacity=".5"/>
+          <path d="M156 88c4 6 6 10 6 13a6 6 0 0 1-12 0c0-3 2-7 6-13z" fill="#7fd8ff" opacity=".9"/>
+          <path d="M120 66V52" stroke="#7d944f" stroke-width="3" stroke-linecap="round"/>
+          <g fill="#e0a05e">
+            <ellipse cx="112" cy="47" rx="7" ry="4.5" transform="rotate(-28 112 47)"/>
+            <ellipse cx="128" cy="47" rx="7" ry="4.5" transform="rotate(28 128 47)"/>
+            <ellipse cx="120" cy="41" rx="4.5" ry="6.5"/>
+            <ellipse cx="111" cy="55" rx="6" ry="3.6" transform="rotate(18 111 55)"/>
+            <ellipse cx="129" cy="55" rx="6" ry="3.6" transform="rotate(-18 129 55)"/>
+          </g>
+          <circle cx="120" cy="48" r="4" fill="#ffd166"/>
+        </svg>
+
+        <!-- Lv.2 이슬 머금은 새싹 -->
+        <svg class="pet pet2" viewBox="0 0 240 240" role="img" aria-label="이슬 머금은 새싹">
+          <defs>
+            <linearGradient id="p2body" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#a9f0b7"/><stop offset="1" stop-color="#4ec98a"/>
+            </linearGradient>
+            <linearGradient id="p2leaf" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stop-color="#37b877"/><stop offset="1" stop-color="#8ef0ad"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="120" cy="203" rx="74" ry="15" fill="#05161c" opacity=".45"/>
+          <ellipse cx="120" cy="196" rx="58" ry="16" fill="#4d3a29"/>
+          <ellipse cx="120" cy="192" rx="58" ry="13" fill="#6a5038"/>
+          <path d="M120 168c-10 0-16 6-16 14 0 7 7 12 16 12s16-5 16-12c0-8-6-14-16-14z" fill="#7ac96f" opacity=".35"/>
+          <path d="M120 96c-26 0-40 22-40 44 0 26 18 42 40 42s40-16 40-42c0-22-14-44-40-44z" fill="url(#p2body)"/>
+          <path d="M120 100c-16 0-26 12-27 26 12 6 26 6 40 0-2-15-13-26-13-26z" fill="#ffffff" opacity=".16"/>
+          <path d="M118 112c-24-6-38-20-40-38 20-2 36 10 40 38z" fill="url(#p2leaf)"/>
+          <path d="M122 106c20-6 32-20 34-38-18 0-32 14-34 38z" fill="url(#p2leaf)"/>
+          <path d="M120 112c-2-8-8-16-16-22M122 106c4-8 10-14 16-18" fill="none" stroke="#2f8f5c" stroke-width="2.2" opacity=".5" stroke-linecap="round"/>
+          <path d="M96 92c3 4 4 8 4 10a4.5 4.5 0 0 1-9 0c0-2 1-5 5-10z" fill="#a8ecff" opacity=".95"/>
+          <path d="M148 84c2 3 3 5 3 7a3.4 3.4 0 0 1-7 0c0-2 1-4 4-7z" fill="#a8ecff" opacity=".8"/>
+          <ellipse cx="107" cy="132" rx="8" ry="9" fill="#173a24"/>
+          <ellipse cx="133" cy="132" rx="8" ry="9" fill="#173a24"/>
+          <circle cx="109.5" cy="129" r="3" fill="#fff"/>
+          <circle cx="135.5" cy="129" r="3" fill="#fff"/>
+          <path d="M112 148c5 5 11 5 16 0" fill="none" stroke="#1e4a2e" stroke-width="3.4" stroke-linecap="round"/>
+          <ellipse cx="96" cy="146" rx="6" ry="4" fill="#ff9aa8" opacity=".45"/>
+          <ellipse cx="144" cy="146" rx="6" ry="4" fill="#ff9aa8" opacity=".45"/>
+          <g fill="#eafff3">
+            <path d="M60 92l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" opacity=".9"/>
+            <path d="M182 120l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".6"/>
+          </g>
+        </svg>
+
+        <!-- Lv.3 촉촉한 크레스티드 게코 -->
+        <svg class="pet pet3" viewBox="0 0 240 240" role="img" aria-label="촉촉한 크레스티드 게코">
+          <defs>
+            <linearGradient id="p3body" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f3d0a8"/><stop offset="1" stop-color="#d79f6e"/>
+            </linearGradient>
+            <linearGradient id="p3belly" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff3e2"/><stop offset="1" stop-color="#f4dcc0"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="120" cy="206" rx="78" ry="14" fill="#05161c" opacity=".45"/>
+          <path d="M78 168c-30 4-46 24-36 40 7 12 28 8 34-6" fill="none" stroke="#d79f6e" stroke-width="17" stroke-linecap="round"/>
+          <path d="M74 176c-18 4-27 15-23 24" fill="none" stroke="#f3d0a8" stroke-width="9" stroke-linecap="round" opacity=".8"/>
+          <ellipse cx="124" cy="160" rx="46" ry="42" fill="url(#p3body)"/>
+          <ellipse cx="124" cy="168" rx="30" ry="30" fill="url(#p3belly)" opacity=".85"/>
+          <g stroke="#c98f63" stroke-width="4" stroke-linecap="round">
+            <path d="M90 190c-10 2-16 6-17 11"/>
+            <path d="M158 190c10 2 16 6 17 11"/>
+            <path d="M108 198c-3 6-7 9-11 9"/>
+            <path d="M140 198c3 6 7 9 11 9"/>
+          </g>
+          <g fill="#d79f6e">
+            <circle cx="72" cy="202" r="5"/><circle cx="81" cy="205" r="4.5"/>
+            <circle cx="176" cy="202" r="5"/><circle cx="167" cy="205" r="4.5"/>
+            <circle cx="96" cy="208" r="4.5"/><circle cx="104" cy="211" r="4"/>
+            <circle cx="152" cy="208" r="4.5"/><circle cx="144" cy="211" r="4"/>
+          </g>
+          <ellipse cx="120" cy="114" rx="52" ry="46" fill="url(#p3body)"/>
+          <path d="M72 96c-4-12 2-22 10-24 2 10 0 18-4 24M92 78c0-14 8-22 16-22 0 10-3 18-8 22M120 70c2-14 12-20 20-18-2 10-7 16-13 19M148 78c8-13 20-16 26-10-6 8-13 12-19 13M166 96c12-8 24-6 27 2-9 5-17 5-24 3"
+                fill="#e8b78a" stroke="#c98f63" stroke-width="2" stroke-linejoin="round" opacity=".95"/>
+          <ellipse cx="100" cy="110" rx="16" ry="17" fill="#fffdf7"/>
+          <ellipse cx="144" cy="110" rx="16" ry="17" fill="#fffdf7"/>
+          <ellipse cx="101" cy="112" rx="8" ry="11" fill="#2a2118"/>
+          <ellipse cx="145" cy="112" rx="8" ry="11" fill="#2a2118"/>
+          <circle cx="98" cy="107" r="3.2" fill="#fff"/>
+          <circle cx="142" cy="107" r="3.2" fill="#fff"/>
+          <path d="M96 96c4-5 10-5 14-1M138 95c4-4 10-4 14 1" fill="none" stroke="#c98f63" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M112 138c5 6 13 6 18 0" fill="none" stroke="#6b4a32" stroke-width="3.4" stroke-linecap="round"/>
+          <circle cx="106" cy="130" r="1.8" fill="#b57c50"/>
+          <circle cx="140" cy="130" r="1.8" fill="#b57c50"/>
+          <g fill="#c98f63" opacity=".55">
+            <circle cx="86" cy="124" r="2.4"/><circle cx="92" cy="136" r="2"/>
+            <circle cx="158" cy="124" r="2.4"/><circle cx="152" cy="136" r="2"/>
+            <circle cx="120" cy="92" r="2.2"/><circle cx="110" cy="86" r="1.8"/>
+            <circle cx="132" cy="86" r="1.8"/>
+          </g>
+          <g fill="#eafff3" opacity=".95">
+            <path d="M52 118l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+            <path d="M188 148l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".7"/>
+            <path d="M196 66l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" opacity=".6"/>
+          </g>
+        </svg>
+
+        <!-- Lv.4 수분 풀충전 오아시스 -->
+        <svg class="pet pet4" viewBox="0 0 240 240" role="img" aria-label="수분 풀충전 오아시스">
+          <defs>
+            <linearGradient id="p4water" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#8ff0ff"/><stop offset="1" stop-color="#1aa6c9"/>
+            </linearGradient>
+            <linearGradient id="p4sand" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffd79a"/><stop offset="1" stop-color="#d99b56"/>
+            </linearGradient>
+            <linearGradient id="p4frond" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stop-color="#2fa96b"/><stop offset="1" stop-color="#7ef0b0"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="120" cy="206" rx="92" ry="15" fill="#05161c" opacity=".45"/>
+          <ellipse cx="120" cy="188" rx="86" ry="30" fill="url(#p4sand)"/>
+          <path d="M40 186c12-6 26-6 38 0" stroke="#c0864a" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+          <path d="M160 194c12-5 24-4 34 2" stroke="#c0864a" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
+          <ellipse cx="118" cy="186" rx="52" ry="18" fill="url(#p4water)"/>
+          <ellipse cx="118" cy="182" rx="44" ry="12" fill="#bff8ff" opacity=".45"/>
+          <path d="M74 182c8 3 16 3 24 0M120 190c8 3 15 2 22-1" stroke="#ffffff" stroke-width="3" fill="none" opacity=".75" stroke-linecap="round"/>
+          <ellipse cx="104" cy="182" rx="4.5" ry="5.5" fill="#0b3d4a"/>
+          <ellipse cx="132" cy="182" rx="4.5" ry="5.5" fill="#0b3d4a"/>
+          <path d="M111 190c4 4 10 4 14 0" fill="none" stroke="#0b3d4a" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M166 178c-6-30-2-52 8-66" fill="none" stroke="#a8724a" stroke-width="11" stroke-linecap="round"/>
+          <path d="M166 178c-6-30-2-52 8-66" fill="none" stroke="#c68a5a" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+          <g fill="url(#p4frond)">
+            <path d="M174 112c-20-6-34-20-34-38 18 0 32 12 38 32z"/>
+            <path d="M176 110c4-22 18-34 36-34-2 18-14 30-32 36z"/>
+            <path d="M172 108c-14-16-34-18-48-10 10 12 26 18 44 16z"/>
+            <path d="M178 108c16-10 30-8 40 2-10 8-24 10-36 6z" opacity=".9"/>
+          </g>
+          <g fill="#ffd166">
+            <circle cx="176" cy="118" r="4"/><circle cx="184" cy="122" r="3.6"/><circle cx="169" cy="123" r="3.4"/>
+          </g>
+          <g fill="#eafff3" opacity=".95">
+            <path d="M62 120l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+            <path d="M200 158l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".75"/>
+            <path d="M46 160l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" opacity=".55"/>
+          </g>
+        </svg>
+
+        <!-- Lv.5 걸어다니는 에비앙 마스터 -->
+        <svg class="pet pet5" viewBox="0 0 240 240" role="img" aria-label="걸어다니는 에비앙 마스터">
+          <defs>
+            <linearGradient id="p5glass" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#e8fbff" stop-opacity=".95"/>
+              <stop offset=".45" stop-color="#a8e9ff"/>
+              <stop offset="1" stop-color="#35b4dd"/>
+            </linearGradient>
+            <linearGradient id="p5cap" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#e0a63a"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="120" cy="206" rx="66" ry="13" fill="#05161c" opacity=".45"/>
+          <path d="M104 72h32v14h-32z" fill="#dff8ff" opacity=".9"/>
+          <path d="M96 86h48c14 0 24 12 24 28v58c0 14-10 22-24 22h-48c-14 0-24-8-24-22v-58c0-16 10-28 24-28z" fill="url(#p5glass)"/>
+          <path d="M100 90h40c10 0 18 10 18 24v52c0 10-7 16-18 16h-8V90z" fill="#ffffff" opacity=".28"/>
+          <path d="M78 132h84" stroke="#ffffff" stroke-width="2" opacity=".5"/>
+          <rect x="86" y="122" width="68" height="24" rx="8" fill="#ffffff" opacity=".55"/>
+          <text x="120" y="139" text-anchor="middle" font-size="15" font-weight="700" fill="#0e6b86" font-family="-apple-system, sans-serif">H₂O</text>
+          <path d="M96 44h48l-6 14H102z" fill="url(#p5cap)"/>
+          <path d="M100 44h40v-8h-40z" fill="#f0b64a"/>
+          <path d="M120 20l6 8h-6l6 8h-12l6-8h-6z" fill="#ffeaa0" opacity=".9"/>
+          <circle cx="120" cy="14" r="4" fill="#fff6c9"/>
+          <g stroke="#9fdcf2" stroke-width="7" stroke-linecap="round" fill="none">
+            <path d="M72 140c-14 4-22 14-22 26"/>
+            <path d="M168 140c14 4 22 14 22 26"/>
+          </g>
+          <g stroke="#9fdcf2" stroke-width="8" stroke-linecap="round">
+            <path d="M104 194v12"/><path d="M136 194v12"/>
+          </g>
+          <g fill="#7fd0ea">
+            <ellipse cx="101" cy="208" rx="9" ry="5"/><ellipse cx="139" cy="208" rx="9" ry="5"/>
+          </g>
+          <ellipse cx="106" cy="158" rx="7" ry="8" fill="#0d5f78"/>
+          <ellipse cx="134" cy="158" rx="7" ry="8" fill="#0d5f78"/>
+          <circle cx="108" cy="155" r="2.6" fill="#fff"/>
+          <circle cx="136" cy="155" r="2.6" fill="#fff"/>
+          <path d="M110 172c6 6 14 6 20 0" fill="none" stroke="#0d5f78" stroke-width="3.4" stroke-linecap="round"/>
+          <ellipse cx="94" cy="166" rx="5" ry="3.4" fill="#ff9aa8" opacity=".5"/>
+          <ellipse cx="146" cy="166" rx="5" ry="3.4" fill="#ff9aa8" opacity=".5"/>
+          <g fill="#eafff3">
+            <path d="M54 108l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+            <path d="M186 96l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".8"/>
+            <path d="M196 160l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" opacity=".6"/>
+            <path d="M44 168l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" opacity=".5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="particles" id="particles" aria-hidden="true"></div>
+    </div>
+
+    <div class="xpBlock">
+      <div class="xpMeta">
+        <span id="xpNow">0 XP</span>
+        <span id="xpNext">다음 진화까지 100</span>
+      </div>
+      <div class="xpTrack"><div class="xpFill" id="xpFill"></div></div>
+    </div>
+  </section>
+
+  <section class="card today">
+    <div class="goalRow">
+      <div class="goalMl"><span id="mlNow">0</span><small>ml</small></div>
+      <div class="goalOf">/ 1,500 ml</div>
+      <div class="goalPct" id="goalPct">0%</div>
+    </div>
+    <div class="bar">
+      <div class="barFill" id="barFill"><span class="barShine"></span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="streakVal">0</b><span>연속 일수</span></div>
+      <div class="stat"><b id="cupVal">0</b><span>오늘 컵</span></div>
+      <div class="stat"><b id="xpVal">0</b><span>누적 XP</span></div>
+    </div>
+  </section>
+
+  <section class="card questCard">
+    <div class="secHead">
+      <h2>오늘의 물 퀘스트</h2>
+      <span class="secHint" id="questHint">0 / 4</span>
+    </div>
+    <div class="quests" id="questList"></div>
+
+    <div class="coffeeBox" id="coffeeBox">
+      <button class="coffeeBtn" id="coffeeBtn" type="button">
+        <span class="qIcon">☕</span>
+        <span class="qMain"><b>커피 마셨어요</b><small>탈수 디버프가 걸려요. 다음 맹물 한 잔이면 해제!</small></span>
+        <span class="qXp debuffXp" id="debuffCount">+0</span>
+      </button>
+    </div>
+
+    <button class="undoBtn" id="undoBtn" type="button" disabled>↩︎ 방금 한 컵 되돌리기</button>
+  </section>
+
+  <section class="card stampsCard">
+    <div class="secHead">
+      <h2>30일 도장판</h2>
+      <span class="secHint" id="stampHint">0일 달성</span>
+    </div>
+    <div class="stampGrid" id="stampGrid"></div>
+    <p class="memo" id="stampMemo">첫 한 잔을 마시면 1일차 도장판이 열려요.</p>
+  </section>
+
+  <section class="card badgesCard">
+    <div class="secHead">
+      <h2>업적 배지</h2>
+      <span class="secHint" id="badgeHint">0 / 12</span>
+    </div>
+    <div class="badgeGrid" id="badgeGrid"></div>
+  </section>
+
+  <p class="footNote">하루 목표 1,500ml. 목마름은 이미 늦은 신호라서, 시간표로 마시는 게 이 챌린지의 전부예요.</p>
+  <p class="syncNote" id="syncNote">동기화 대기 중</p>
+</main>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="confetti" id="confetti"></div>
+  <div class="overlayCard" id="overlayCard">
+    <div class="overlayEmoji" id="overlayEmoji">🎉</div>
+    <h2 class="overlayTitle" id="overlayTitle">목표 달성!</h2>
+    <p class="overlaySub" id="overlaySub"></p>
+    <button class="overlayBtn" id="overlayBtn" type="button">좋아, 계속!</button>
+  </div>
+</div>
+
+<div class="toastWrap" id="toastWrap" aria-live="polite"></div>
+
+<script src="./app.js"></script>
+</body>
+</html>

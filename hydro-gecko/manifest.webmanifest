@@ -1,0 +1,16 @@
+{
+  "name": "만성 탈수 탈출 챌린지",
+  "short_name": "수분 게코",
+  "description": "하루 1,500ml. 마실 때마다 게코가 촉촉해지는 수분 챌린지.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#031824",
+  "theme_color": "#052a3d",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
