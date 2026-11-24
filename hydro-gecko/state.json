@@ -1,18 +1,30 @@
 {
-  "xp": 0,
-  "streak": 0,
-  "bestStreak": 0,
+  "xp": 300,
+  "streak": 3,
+  "bestStreak": 3,
   "lastDate": "2026-11-24",
-  "lastGoalDate": null,
-  "todayMl": 0,
-  "todayXp": 0,
-  "totalMl": 0,
+  "lastGoalDate": "2026-11-24",
+  "todayMl": 2000,
+  "todayXp": 70,
+  "totalMl": 5200,
   "coffeeDebuff": 0,
   "coffees": 0,
   "coffeeClears": 0,
   "freeCups": 0,
-  "completedQuests": [],
-  "history": {},
+  "completedQuests": [
+    "morning",
+    "lunch",
+    "afternoon",
+    "night"
+  ],
+  "history": {
+    "2026-11-24": {
+      "ml": 2000,
+      "xp": 70,
+      "goal": true,
+      "q": 4
+    }
+  },
   "badges": [],
-  "updatedAt": "2026-11-24T22:19:09+09:00"
+  "updatedAt": "2026-11-24T22:21:27+09:00"
 }
