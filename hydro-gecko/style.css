@@ -35,6 +35,8 @@ body{
   padding-top:calc(var(--safeT) + 8px);
   padding-bottom:calc(var(--safeB) + 28px);
   -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+  overflow-wrap:break-word;
   overflow-x:hidden;
   user-select:none;
   -webkit-user-select:none;
@@ -340,7 +342,7 @@ main{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:0 14px;di
 .overlayEmoji{font-size:56px;line-height:1;filter:drop-shadow(0 8px 22px rgba(95,227,255,.5));animation:emojiHop 1.4s ease-in-out infinite;}
 @keyframes emojiHop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
 .overlayTitle{margin:12px 0 6px;font-size:23px;font-weight:900;letter-spacing:-.6px;color:#f2feff;}
-.overlaySub{margin:0 0 18px;font-size:13px;line-height:1.6;color:#b6dcea;font-weight:600;}
+.overlaySub{margin:0 0 18px;font-size:13px;line-height:1.65;color:#b6dcea;font-weight:600;padding:0 4px;}
 .overlayBtn{
   width:100%;padding:14px;border-radius:16px;border:none;cursor:pointer;
   font:inherit;font-size:15px;font-weight:900;color:#04232f;
