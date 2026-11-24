@@ -667,7 +667,7 @@
       if (h && h.goal) { cell.classList.add('goal'); goals++; }
       else if (h && h.ml > 0) cell.classList.add('part');
       if (h && h.ml > 0) total++;
-      cell.innerHTML = '<span class="d">' + (key > today ? '' : num + '일') + '</span><span class="mark">✦</span>';
+      cell.innerHTML = '<span class="d">' + num + '</span><span class="mark">✓</span>';
       cell.title = key + (h ? '  ' + h.ml + 'ml' : '');
       grid.appendChild(cell);
     }
