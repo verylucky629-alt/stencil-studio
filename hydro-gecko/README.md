@@ -61,7 +61,10 @@
 - `app.js`: 상태, 퀘스트, 레벨, 스트릭, 도장판, 배지, state.json 병합
 - `state.json`: 채팅 쪽에서 갱신하는 원격 상태
 - `manifest.webmanifest`, `icon-192.png`, `icon-512.png`, `icon-180.png`: 홈 화면 아이콘
-- `make_icon.py`: 아이콘 생성 스크립트
+
+## 배포 위치
+
+지금은 GitHub 연결에 저장소 생성 권한이 없어서 `stencil-studio` 저장소의 `hydro-gecko/` 폴더로 배포했습니다. 전용 저장소(`hydro-gecko`)를 만들 수 있게 되면 이 폴더를 그대로 옮기고 Pages를 켜면 됩니다.
 
 ## 검증 팁
 
