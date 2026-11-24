@@ -33,7 +33,7 @@
     4: ['풍덩!', '오아시스 완성', '물이 넘실넘실', '완전 촉촉'],
     5: ['에비앙급 컨디션', '수분 마스터', '오늘도 완벽', '물이 곧 나야']
   };
-  var POPS = ['짠!', '벌컥!', '한 모금 완료', '촉촉 +'] ;
+  var POPS = ['짠!', '벌컥!', '한 모금 완료', '촉촉!'] ;
 
   var BADGES = [
     { id: 'first-sip', icon: '🥤', name: '첫 한 모금',   check: function (s) { return s.totalMl > 0; } },
@@ -248,9 +248,19 @@
       say(q.ml >= 300 ? '벌컥! ' + comma(q.ml) + 'ml' : (POPS[Math.floor(Math.random() * POPS.length)] + ' +' + comma(q.ml) + 'ml'));
       sfx.plop();
       toast('+' + comma(q.ml) + 'ml  +' + gained + ' XP' + (cleared ? '  ☕ 디버프 해제!' : ''), cleared ? 'gold' : '');
-      if (goalMade) celebrateGoal();
-      var after = levelFor(state.xp).lv;
-      if (after > before) celebrateLevel(levelFor(state.xp));
+      var afterLv = levelFor(state.xp);
+      if (goalMade && afterLv.lv > before) {
+        setTimeout(function () {
+          sfx.level();
+          showOverlay('🎉', '목표 달성 + LEVEL UP', '1,500ml 완주, ' + state.streak + '일 연속. 이제 ' + afterLv.name + ' 등극!');
+          burst(400);
+          toast('🔥 ' + state.streak + '일 연속 달성!', 'gold');
+        }, 420);
+      } else if (goalMade) {
+        celebrateGoal();
+      } else if (afterLv.lv > before) {
+        celebrateLevel(afterLv);
+      }
     }
     return { ml: q.ml, xp: gained };
   }
@@ -396,7 +406,7 @@
       })
       .then(function (json) {
         applyRemote(json);
-        setSync('state.json 동기화 완료  ' + timeShort(new Date()), true);
+        setSync('state.json 동기화 완료', true);
       })
       .catch(function (err) {
         setSync('원격 동기화 실패, 기기에만 저장 중', false);
@@ -552,7 +562,7 @@
   function celebrateLevel(lv) {
     setTimeout(function () {
       sfx.level();
-      showOverlay('✨', 'LEVEL UP!  Lv.' + lv.lv, lv.name + ' 로 진화했어요.');
+      showOverlay('✨', 'LEVEL UP!  Lv.' + lv.lv, '이제 ' + lv.name + ' 등극!');
       burst(400);
     }, 400);
   }
@@ -561,7 +571,12 @@
   function render() {
     var lv = levelFor(state.xp);
     var pets = document.querySelectorAll('.pet');
-    for (var i = 0; i < pets.length; i++) pets[i].classList.toggle('on', i === lv.lv - 1);
+    for (var i = 0; i < pets.length; i++) {
+      var active = i === lv.lv - 1;
+      pets[i].classList.toggle('on', active);
+      pets[i].setAttribute('aria-hidden', active ? 'false' : 'true');
+      pets[i].setAttribute('focusable', 'false');
+    }
     document.getElementById('stageGlow').style.background =
       'radial-gradient(circle, ' + lv.glow + ', rgba(95,227,255,.04) 55%, transparent 72%)';
     document.getElementById('lvBadge').textContent = 'Lv.' + lv.lv;
@@ -609,25 +624,22 @@
       btn.className = 'quest' + (done ? ' done' : '');
       btn.setAttribute('data-quest', q.id);
       btn.setAttribute('aria-pressed', done ? 'true' : 'false');
-      var xp = (q.repeat && q.id === 'free' && state.freeCups > 0) ? '+' + q.xp + '  ' + state.freeCups + '회' : '+' + q.xp + ' XP';
+      var sub = q.time + '  ' + q.sub;
+      if (q.repeat && state.freeCups > 0) sub += '  오늘 ' + state.freeCups + '회';
       btn.innerHTML =
         '<span class="qIcon">' + q.icon + '</span>' +
-        '<span class="qMain"><b>' + q.name + '  ' + comma(q.ml) + 'ml</b><small>' + q.time + '  ' + q.sub + '</small></span>' +
-        '<span class="qXp">' + xp + '</span>';
-      if (q.repeat && state.freeCups > 0) {
-        var c = document.createElement('span');
-        c.className = 'qCount';
-        c.textContent = '×' + state.freeCups;
-        c.style.display = 'block';
-        btn.appendChild(c);
-      }
-      btn.addEventListener('click', function () { addWater(q); });
+        '<span class="qMain"><b>' + q.name + '  ' + comma(q.ml) + 'ml</b><small>' + sub + '</small></span>' +
+        '<span class="qXp">+' + q.xp + ' XP</span>';
+      btn.addEventListener('click', function () {
+        if (done) { toast('이미 마신 컵이에요. 더 마셨다면 자유 한 컵을 눌러 주세요'); return; }
+        addWater(q);
+      });
       box.appendChild(btn);
     });
     document.getElementById('questHint').textContent = state.completedQuests.length + ' / 4';
 
     var debuff = document.getElementById('debuffCount');
-    debuff.textContent = state.coffeeDebuff > 0 ? '디버프 ' + state.coffeeDebuff : '+0';
+    debuff.textContent = state.coffeeDebuff > 0 ? '디버프 ' + state.coffeeDebuff : '없음';
     document.getElementById('coffeeBox').firstElementChild.classList.toggle('armed', state.coffeeDebuff > 0);
   }
 
@@ -778,7 +790,8 @@
       getState: function () { return JSON.parse(JSON.stringify(state)); },
       getLevel: function () { return levelFor(state.xp); },
       addWater: function (id) { var q = QUESTS.filter(function (x) { return x.id === id; })[0]; return addWater(q, true); },
-      sync: function () { return fetchRemote(true); }
+      sync: function () { return fetchRemote(true); },
+      preview: function (emoji, title, sub) { showOverlay(emoji || '🎉', title || '미리보기', sub || ''); }
     };
   }
 
