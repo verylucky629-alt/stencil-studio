@@ -47,24 +47,58 @@
   var orderUpper = centerOut(UPPER.n);
   var orderLower = centerOut(LOWER.n);
 
+  function archTable(arch) {
+    var A = arch === 'u' ? UPPER : LOWER;
+    if (A._tbl) return A._tbl;
+    var N = 600, pts = [], total = 0;
+    for (var i = 0; i <= N; i++) {
+      var xn = -1 + (2 * i) / N;
+      var c = Math.sqrt(Math.max(0, 1 - xn * xn));
+      var x = CX + A.W * xn;
+      var y = A.tipY - A.dir * A.H * (1 - c);
+      if (i > 0) total += Math.sqrt(Math.pow(x - pts[i - 1].x, 2) + Math.pow(y - pts[i - 1].y, 2));
+      pts.push({ x: x, y: y, s: total });
+    }
+    A._tbl = { pts: pts, total: total };
+    return A._tbl;
+  }
+
+  // 호 길이 기준으로 아치 위의 한 점과 바깥 법선을 구한다.
+  function pointAt(arch, frac) {
+    var A = arch === 'u' ? UPPER : LOWER;
+    var t = archTable(arch);
+    var target = t.total * Math.max(0, Math.min(1, frac));
+    var lo = 0, hi = t.pts.length - 1;
+    while (lo < hi) {
+      var mid = (lo + hi) >> 1;
+      if (t.pts[mid].s < target) lo = mid + 1; else hi = mid;
+    }
+    var b = t.pts[lo], a = t.pts[Math.max(0, lo - 1)];
+    var span = (b.s - a.s) || 1, k = (target - a.s) / span;
+    var x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k;
+    var tx = b.x - a.x, ty = b.y - a.y;
+    var len = Math.sqrt(tx * tx + ty * ty) || 1;
+    tx /= len; ty /= len;
+    return {
+      x: x, y: y,
+      nx: A.dir === 1 ? ty : -ty,
+      ny: A.dir === 1 ? -tx : tx
+    };
+  }
+
   function archSlot(arch, p) {
     var A = arch === 'u' ? UPPER : LOWER;
-    var pitch = (2 * A.W) / A.n;
-    var x = CX - A.W + (p + 0.5) * pitch;
-    var xn = (x - CX) / A.W;
-    var c = Math.sqrt(Math.max(0, 1 - xn * xn));
-    var y = A.tipY - A.dir * A.H * (1 - c);
-    var m = (-A.dir * A.H * xn) / (A.W * Math.max(0.06, c));
-    m = Math.max(-0.65, Math.min(0.65, m));       // 기울기 상한 33도
-    var nx = m, ny = -A.dir;
-    var rot = (Math.atan2(ny, nx) * 180) / Math.PI + 90;
+    var t = archTable(arch);
+    var q = pointAt(arch, (p + 0.5) / A.n);
+    var pitch = t.total / A.n;
+    var rot = (Math.atan2(q.ny, q.nx) * 180) / Math.PI + 90;
     var mid = arch === 'u' ? UPPER.n / 2 : (LOWER.n - 1) / 2;
     var k = arch === 'u'
       ? Math.round(Math.abs(p - mid + 0.5) - 0.5)
       : Math.abs(p - mid);
     var type = k === 0 || k === 1 ? 'inc' : k === 2 ? 'can' : k <= 4 ? 'pre' : 'mol';
     var scale = k === 0 ? 1.02 : k === 1 ? 0.98 : k === 2 ? 1.0 : k <= 4 ? 1.0 : 1.0 - Math.min(0.08, (k - 5) * 0.012);
-    return { x: x, y: y, rot: rot, pitch: pitch, w: pitch * scale, type: type, k: k };
+    return { x: q.x, y: q.y, rot: rot, pitch: pitch, w: pitch * 0.98 * scale, type: type, k: k, nx: q.nx, ny: q.ny };
   }
 
   function buildSlots() {
@@ -216,22 +250,11 @@
 
   function gumPath(arch) {
     var A = arch === 'u' ? UPPER : LOWER;
-    var N = 120, raw = [];
-    for (var i = 0; i <= N; i++) {
-      var xn = -0.985 + (1.97 * i) / N;
-      var c = Math.sqrt(Math.max(0, 1 - xn * xn));
-      raw.push([CX + A.W * xn, A.tipY - A.dir * A.H * (1 - c)]);
-    }
-    var outer = [], inner = [];
+    var N = 150, outer = [], inner = [];
     for (var j = 0; j <= N; j++) {
-      var a = raw[Math.max(0, j - 1)], b = raw[Math.min(N, j + 1)];
-      var tx = b[0] - a[0], ty = b[1] - a[1];
-      var len = Math.sqrt(tx * tx + ty * ty) || 1;
-      tx /= len; ty /= len;
-      var nx = A.dir === 1 ? ty : -ty;
-      var ny = A.dir === 1 ? -tx : tx;
-      outer.push([raw[j][0] + nx * (CROWN + 16), raw[j][1] + ny * (CROWN + 16)]);
-      inner.push([raw[j][0] + nx * (CROWN - 6), raw[j][1] + ny * (CROWN - 6)]);
+      var q = pointAt(arch, j / N);
+      outer.push([q.x + q.nx * (CROWN + 17), q.y + q.ny * (CROWN + 17)]);
+      inner.push([q.x + q.nx * (CROWN - 6), q.y + q.ny * (CROWN - 6)]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
