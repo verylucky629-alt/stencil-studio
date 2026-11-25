@@ -13,7 +13,7 @@
   var CX = 500;
   var UPPER = { n: 26, tipY: 300, W: 300, H: 104, dir: 1 };
   var LOWER = { n: 25, tipY: 342, W: 300, H: 104, dir: -1 };
-  var CROWN = 44;
+  var CROWN = 38;
   var SLOTS = [];
   var atSlot = [];
 
@@ -63,8 +63,8 @@
       ? Math.round(Math.abs(p - mid + 0.5) - 0.5)
       : Math.abs(p - mid);
     var type = k === 0 || k === 1 ? 'inc' : k === 2 ? 'can' : k <= 4 ? 'pre' : 'mol';
-    var scale = k === 0 ? 1.04 : k === 1 ? 0.98 : k === 2 ? 1.0 : k <= 4 ? 0.98 : 1.0 - Math.min(0.1, (k - 5) * 0.014);
-    return { x: x, y: y, rot: rot, pitch: pitch, w: pitch * 0.95 * scale, type: type, k: k };
+    var scale = k === 0 ? 1.02 : k === 1 ? 0.98 : k === 2 ? 1.0 : k <= 4 ? 1.0 : 1.0 - Math.min(0.08, (k - 5) * 0.012);
+    return { x: x, y: y, rot: rot, pitch: pitch, w: pitch * scale, type: type, k: k };
   }
 
   function buildSlots() {
@@ -200,22 +200,28 @@
 
   function gumPath(arch) {
     var A = arch === 'u' ? UPPER : LOWER;
-    var pts = [];
-    var N = 110;
+    var N = 120, raw = [];
     for (var i = 0; i <= N; i++) {
       var xn = -1 + (2 * i) / N;
-      var x = CX + A.W * xn;
       var c = Math.sqrt(Math.max(0, 1 - xn * xn));
-      var y = A.tipY - A.dir * A.H * (1 - c);
-      pts.push([x, y]);
+      raw.push([CX + A.W * xn, A.tipY - A.dir * A.H * (1 - c)]);
     }
-    var top = CROWN + 12;
-    var bot = CROWN - 6;
-    var line = function (p, off) { return p[0].toFixed(1) + ' ' + (p[1] - A.dir * off).toFixed(1); };
-    var d = 'M' + line(pts[0], bot);
-    for (var j = 1; j < pts.length; j++) d += ' L' + line(pts[j], bot);
-    d += ' L' + line(pts[pts.length - 1], top);
-    for (var k = pts.length - 2; k >= 0; k--) d += ' L' + line(pts[k], top);
+    var outer = [], inner = [];
+    for (var j = 0; j <= N; j++) {
+      var a = raw[Math.max(0, j - 1)], b = raw[Math.min(N, j + 1)];
+      var tx = b[0] - a[0], ty = b[1] - a[1];
+      var len = Math.sqrt(tx * tx + ty * ty) || 1;
+      tx /= len; ty /= len;
+      var nx = A.dir === 1 ? ty : -ty;
+      var ny = A.dir === 1 ? -tx : tx;
+      outer.push([raw[j][0] + nx * (CROWN + 15), raw[j][1] + ny * (CROWN + 15)]);
+      inner.push([raw[j][0] + nx * (CROWN - 9), raw[j][1] + ny * (CROWN - 9)]);
+    }
+    var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
+    var d = 'M' + pt(inner[0]);
+    for (var k = 1; k < inner.length; k++) d += ' L' + pt(inner[k]);
+    d += ' L' + pt(outer[outer.length - 1]);
+    for (var m = outer.length - 2; m >= 0; m--) d += ' L' + pt(outer[m]);
     return d + ' Z';
   }
 
