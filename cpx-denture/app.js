@@ -98,7 +98,7 @@
       : Math.abs(p - mid);
     var type = k === 0 || k === 1 ? 'inc' : k === 2 ? 'can' : k <= 4 ? 'pre' : 'mol';
     var scale = k === 0 ? 1.02 : k === 1 ? 0.98 : k === 2 ? 1.0 : k <= 4 ? 1.0 : 1.0 - Math.min(0.08, (k - 5) * 0.012);
-    return { x: q.x, y: q.y, rot: rot, pitch: pitch, w: pitch * 0.98 * scale, type: type, k: k, nx: q.nx, ny: q.ny };
+    return { x: q.x, y: q.y, rot: rot, pitch: pitch, w: pitch * 1.08 * scale, type: type, k: k, nx: q.nx, ny: q.ny };
   }
 
   function buildSlots() {
@@ -253,8 +253,8 @@
     var N = 150, outer = [], inner = [];
     for (var j = 0; j <= N; j++) {
       var q = pointAt(arch, j / N);
-      outer.push([q.x + q.nx * (CROWN + 17), q.y + q.ny * (CROWN + 17)]);
-      inner.push([q.x + q.nx * (CROWN - 6), q.y + q.ny * (CROWN - 6)]);
+      outer.push([q.x + q.nx * (CROWN + 20), q.y + q.ny * (CROWN + 20)]);
+      inner.push([q.x + q.nx * (CROWN - 2), q.y + q.ny * (CROWN - 2)]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
