@@ -113,8 +113,12 @@
       'C' + P(-0.6) + ' ' + Y(-0.1) + ' ' + P(-1) + ' ' + Y(-0.12) + ' ' + P(-1) + ' ' + Y(-0.26) + 'Z';
   }
 
+  function toothH(type) {
+    return type === 'inc' ? CROWN + 3 : type === 'can' ? CROWN + 4 : type === 'pre' ? CROWN - 2 : CROWN - 4;
+  }
+
   function buildTooth(t, s, idx) {
-    var H = s.type === 'inc' ? CROWN + 3 : s.type === 'can' ? CROWN + 4 : s.type === 'pre' ? CROWN - 2 : CROWN - 4;
+    var H = toothH(s.type);
     var w = s.w;
     var hw = w / 2;
     var g = document.createElementNS(svgNS, 'g');
@@ -198,6 +202,18 @@
     return g;
   }
 
+  function buildCollar(s) {
+    var H = toothH(s.type);
+    var g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('transform', 'translate(' + s.x.toFixed(2) + ' ' + s.y.toFixed(2) + ') rotate(' + s.rot.toFixed(2) + ')');
+    var p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', crownPath(s.type, s.w, H));
+    p.setAttribute('fill', 'url(#gum)');
+    p.setAttribute('transform', 'translate(0 ' + (-H * 0.42).toFixed(1) + ') scale(1.34) translate(0 ' + (H * 0.42).toFixed(1) + ')');
+    g.appendChild(p);
+    return g;
+  }
+
   function gumPath(arch) {
     var A = arch === 'u' ? UPPER : LOWER;
     var N = 120, raw = [];
@@ -214,8 +230,8 @@
       tx /= len; ty /= len;
       var nx = A.dir === 1 ? ty : -ty;
       var ny = A.dir === 1 ? -tx : tx;
-      outer.push([raw[j][0] + nx * (CROWN + 18), raw[j][1] + ny * (CROWN + 18)]);
-      inner.push([raw[j][0] + nx * (CROWN - 6), raw[j][1] + ny * (CROWN - 6)]);
+      outer.push([raw[j][0] + nx * (CROWN + 14), raw[j][1] + ny * (CROWN + 14)]);
+      inner.push([raw[j][0] + nx * (CROWN - 2), raw[j][1] + ny * (CROWN - 2)]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
@@ -249,6 +265,7 @@
     DATA.topics.forEach(function (t, i) {
       var sl = (t.slot != null && SLOTS[t.slot]) ? t.slot : i;
       while (atSlot[sl] !== undefined) sl++;
+      gums.appendChild(buildCollar(SLOTS[sl]));
       var s = SLOTS[sl];
       var el = buildTooth(t, s, i);
       el._s = s;
