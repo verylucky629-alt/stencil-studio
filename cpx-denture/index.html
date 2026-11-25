@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CPX 틀니 · 51개 문진 채우기</title>
+<meta name="description" content="CPX 51개 토픽이 하나씩 완성될수록 앞니부터 어금니까지 차오르는 틀니 진도판">
+<meta name="theme-color" content="#fbf7f2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23fbf7f2'/%3E%3Cpath d='M28 34c0-9 10-14 22-14s22 5 22 14c0 8-4 12-6 20-2 8-3 16-8 16s-3-10-8-10-3 10-8 10-6-8-8-16c-2-8-6-12-6-20z' fill='%23fffdf8' stroke='%23c9a9a3' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23fbf7f2'/%3E%3Cpath d='M28 34c0-9 10-14 22-14s22 5 22 14c0 8-4 12-6 20-2 8-3 16-8 16s-3-10-8-10-3 10-8 10-6-8-8-16c-2-8-6-12-6-20z' fill='%23fffdf8' stroke='%23c9a9a3' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="toothmark" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><path d="M25 33c0-10 11-15 25-15s25 5 25 15c0 9-5 13-7 22-2 9-3 18-9 18s-3-11-9-11-3 11-9 11-7-9-9-18c-2-9-7-13-7-22z"/></svg>
+    </span>
+    <span class="brandtext">CPX 틀니</span>
+  </div>
+  <a class="notionlink" id="notionTop" href="https://www.notion.so/422b0b095d2e817c8944eaf6b4057d3f" target="_blank" rel="noopener">노션 노트</a>
+</header>
+
+<section class="hero" aria-live="polite">
+  <div class="progline">
+    <div class="count"><b id="doneNum">1</b><span class="of">/ 51</span></div>
+    <div class="sidetext">
+      <p class="remain">남은 <b id="remainNum">50</b>개</p>
+      <p class="lastdone" id="lastDone">마지막 완료 2026-11-24</p>
+    </div>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
+</section>
+
+<main class="stagewrap">
+  <div class="stage" id="stage">
+    <svg id="mouth" viewBox="0 70 1000 500" role="img" aria-label="상악 26개, 하악 25개 치아로 이루어진 CPX 진도 틀니">
+      <defs>
+        <linearGradient id="enamel" x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="0.45" stop-color="#fdfaf3"/>
+          <stop offset="1" stop-color="#eadfcd"/>
+        </linearGradient>
+        <linearGradient id="enamelSoft" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fffdf9"/>
+          <stop offset="1" stop-color="#f3ead9"/>
+        </linearGradient>
+        <linearGradient id="gum" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f0b3b8"/>
+          <stop offset="0.55" stop-color="#e29ba3"/>
+          <stop offset="1" stop-color="#cf828c"/>
+        </linearGradient>
+        <linearGradient id="gumLower" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#f0b3b8"/>
+          <stop offset="0.55" stop-color="#e29ba3"/>
+          <stop offset="1" stop-color="#cf828c"/>
+        </linearGradient>
+        <filter id="softShadow" x="-20%" y="-40%" width="140%" height="200%">
+          <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#8a5a5f" flood-opacity="0.22"/>
+        </filter>
+        <filter id="toothShadow" x="-60%" y="-40%" width="220%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#7d5f4e" flood-opacity="0.28"/>
+        </filter>
+      </defs>
+      <g id="gums"></g>
+      <g id="sockets"></g>
+      <g id="teeth"></g>
+    </svg>
+  </div>
+  <div class="previewtag" id="previewTag">미리보기 재생 중</div>
+  <p class="hint" id="hint">치아를 누르면 그 토픽이 열려요. 빈 소켓은 아직 정리 전.</p>
+</main>
+
+<nav class="controls" aria-label="보기 설정">
+  <button class="btn primary" id="replay">
+    <span class="ic" aria-hidden="true">▶</span> 모션 다시 재생
+  </button>
+  <button class="btn" id="zoomIn" aria-label="확대">＋</button>
+  <button class="btn" id="zoomOut" aria-label="축소">－</button>
+  <button class="btn" id="toggleNums" aria-pressed="false">번호</button>
+  <button class="btn" id="toggleList" aria-expanded="false">목록</button>
+</nav>
+
+<section class="listview" id="listView" hidden>
+  <div class="listhead">
+    <h2>51개 토픽</h2>
+    <p>완료한 토픽은 뽀얀 치아, 남은 토픽은 빈 소켓이에요.</p>
+  </div>
+  <ul class="rows" id="rows"></ul>
+</section>
+
+<footer class="foot">
+  <p id="footNote">진도는 CPX 문진 노트와 같은 키워드 파일에서 자동으로 만들어집니다.</p>
+</footer>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="backdrop" data-close></div>
+  <article class="card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="close" id="sheetClose" aria-label="닫기">✕</button>
+    <div class="cardtop">
+      <p class="chiprow"><span class="numchip" id="sheetNum">44-2</span><span class="statechip" id="sheetState">완료</span></p>
+      <h2 id="sheetTitle">금연 상담</h2>
+      <p class="sheetmeta" id="sheetMeta">2026-11-24 완료</p>
+    </div>
+    <div class="cardbody" id="sheetBody"></div>
+    <div class="cardfoot">
+      <a class="btn primary wide" id="sheetNotion" href="https://www.notion.so/422b0b095d2e817c8944eaf6b4057d3f" target="_blank" rel="noopener">노션 CPX 문진 노트에서 보기</a>
+    </div>
+  </article>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
