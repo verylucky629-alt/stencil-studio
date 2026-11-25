@@ -378,7 +378,7 @@
           setFilled(idx, true, 0);
           paintCounter(n + 1);
           if (n === order.length - 1) {
-            later(function () { finishPreview(); }, 2600);
+            later(function () { finishPreview(); }, 20000);
           }
         }, 120 + k * step);
       })(order[k], k);
