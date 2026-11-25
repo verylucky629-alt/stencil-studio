@@ -35,7 +35,7 @@
 
 <main class="stagewrap">
   <div class="stage" id="stage">
-    <svg id="mouth" viewBox="140 132 720 400" role="img" aria-label="상악 26개, 하악 25개 치아로 이루어진 CPX 진도 틀니">
+    <svg id="mouth" viewBox="155 160 690 336" role="img" aria-label="상악 26개, 하악 25개 치아로 이루어진 CPX 진도 틀니">
       <defs>
         <linearGradient id="enamel" x1="0" y1="0" x2="0.3" y2="1">
           <stop offset="0" stop-color="#ffffff"/>
@@ -56,6 +56,11 @@
           <stop offset="0.55" stop-color="#e29ba3"/>
           <stop offset="1" stop-color="#cf828c"/>
         </linearGradient>
+        <radialGradient id="cavity" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#8a5a58" stop-opacity="0.16"/>
+          <stop offset="0.62" stop-color="#8a5a58" stop-opacity="0.07"/>
+          <stop offset="1" stop-color="#8a5a58" stop-opacity="0"/>
+        </radialGradient>
         <filter id="softShadow" x="-20%" y="-40%" width="140%" height="200%">
           <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#8a5a5f" flood-opacity="0.22"/>
         </filter>
@@ -63,6 +68,7 @@
           <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#7d5f4e" flood-opacity="0.28"/>
         </filter>
       </defs>
+      <ellipse cx="500" cy="325" rx="350" ry="158" fill="url(#cavity)"/>
       <g id="gums"></g>
       <g id="sockets"></g>
       <g id="teeth"></g>

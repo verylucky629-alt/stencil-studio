@@ -11,8 +11,8 @@
   var ZOOMS = [1, 1.35, 1.8, 2.4];
 
   var CX = 500;
-  var UPPER = { n: 26, tipY: 302, W: 330, H: 84, dir: 1 };
-  var LOWER = { n: 25, tipY: 356, W: 330, H: 84, dir: -1 };
+  var UPPER = { n: 26, tipY: 300, W: 326, H: 70, dir: 1 };
+  var LOWER = { n: 25, tipY: 350, W: 326, H: 70, dir: -1 };
   var CROWN = 46;
   var SLOTS = [];
   var atSlot = [];
@@ -55,7 +55,7 @@
     var c = Math.sqrt(Math.max(0, 1 - xn * xn));
     var y = A.tipY - A.dir * A.H * (1 - c);
     var m = (-A.dir * A.H * xn) / (A.W * Math.max(0.06, c));
-    m = Math.max(-0.78, Math.min(0.78, m));       // 기울기 상한 38도
+    m = Math.max(-0.65, Math.min(0.65, m));       // 기울기 상한 33도
     var nx = m, ny = -A.dir;
     var rot = (Math.atan2(ny, nx) * 180) / Math.PI + 90;
     var mid = arch === 'u' ? UPPER.n / 2 : (LOWER.n - 1) / 2;
@@ -118,7 +118,7 @@
   }
 
   function buildTooth(t, s, idx) {
-    var H = s.type === 'inc' ? CROWN + 2 : s.type === 'can' ? CROWN + 3 : s.type === 'pre' ? CROWN - 3 : CROWN - 5;
+    var H = s.type === 'inc' ? CROWN + 2 : s.type === 'can' ? CROWN + 3 : s.type === 'pre' ? CROWN - 2 : CROWN - 4;
     var w = s.w;
     var hw = w / 2;
     var g = document.createElementNS(svgNS, 'g');
@@ -213,8 +213,8 @@
       var y = A.tipY - A.dir * A.H * (1 - c);
       pts.push([x, y]);
     }
-    var top = CROWN + 26;
-    var bot = CROWN - 22;
+    var top = CROWN + 17;
+    var bot = CROWN - 30;
     var line = function (p, off) { return p[0].toFixed(1) + ' ' + (p[1] - A.dir * off).toFixed(1); };
     var d = 'M' + line(pts[0], bot);
     for (var j = 1; j < pts.length; j++) d += ' L' + line(pts[j], bot);
