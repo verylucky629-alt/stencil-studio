@@ -148,6 +148,19 @@ b{font-weight:700}
 }
 
 /* ---------- controls ---------- */
+.nextcard{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  max-width:520px;margin:14px auto 0;padding:12px 14px;
+  background:linear-gradient(180deg,#fffdfa,#fdf5ee);
+  border:1px solid #ecdccf;border-radius:16px;
+  box-shadow:0 2px 8px rgba(150,110,90,.06);
+}
+.nextcard.alldone{justify-content:center;background:linear-gradient(180deg,#fdf6e6,#f9eed4);border-color:#ecd9b4}
+.ncbody{min-width:0}
+.nclabel{margin:0 0 3px;font-size:.7rem;letter-spacing:.04em;color:#a4795f;font-weight:650}
+.nctitle{margin:0;display:flex;align-items:center;gap:7px;font-size:.92rem;letter-spacing:-.01em}
+.nctitle b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nextcard .btn{flex:0 0 auto;font-size:.78rem;padding:8px 12px;min-height:36px}
 .controls{
   display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
   padding:14px 16px 4px;max-width:1000px;margin:0 auto;
@@ -263,6 +276,11 @@ details.script[open] summary::after{content:" ▴"}
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
   .tooth .body{transform:none;opacity:1}
+}
+@media (max-width:540px){
+  .controls{display:grid;grid-template-columns:repeat(4,auto);gap:8px;justify-content:center;padding:14px 16px 4px}
+  #replay{grid-column:1/-1;width:100%;justify-self:center}
+  .nextcard{margin:12px 16px 0;max-width:none}
 }
 @media (max-width:420px){
   .count b{font-size:2.5rem}

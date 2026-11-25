@@ -295,6 +295,20 @@
       if (!DATA.topics[i].done) { nextIdx = i; break; }
     }
     teeth.forEach(function (el, i) { el.classList.toggle('next', i === nextIdx); });
+    var card = $('nextCard');
+    if (!card) return;
+    if (nextIdx < 0) {
+      card.classList.add('alldone');
+      $('ncNum').textContent = '51';
+      $('ncTitle').textContent = '51개 다 채웠어요';
+      $('ncOpen').hidden = true;
+    } else {
+      card.classList.remove('alldone');
+      $('ncNum').textContent = DATA.topics[nextIdx].num;
+      $('ncTitle').textContent = DATA.topics[nextIdx].title;
+      $('ncOpen').hidden = false;
+      $('ncOpen').onclick = function () { openTopic(nextIdx); };
+    }
   }
 
   function setFilled(i, on, delay) {
