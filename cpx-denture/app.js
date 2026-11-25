@@ -214,8 +214,10 @@
       tx /= len; ty /= len;
       var nx = A.dir === 1 ? ty : -ty;
       var ny = A.dir === 1 ? -tx : tx;
-      outer.push([raw[j][0] + nx * (CROWN + 15), raw[j][1] + ny * (CROWN + 15)]);
-      inner.push([raw[j][0] + nx * (CROWN - 9), raw[j][1] + ny * (CROWN - 9)]);
+      var edge = Math.min(j, N - j) / (0.1 * N);
+      var taper = 0.3 + 0.7 * Math.min(1, Math.max(0, edge));
+      outer.push([raw[j][0] + nx * (CROWN + 15) * taper, raw[j][1] + ny * (CROWN + 15) * taper]);
+      inner.push([raw[j][0] + nx * (CROWN - 9) * taper, raw[j][1] + ny * (CROWN - 9) * taper]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
