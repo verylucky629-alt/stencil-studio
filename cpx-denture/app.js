@@ -213,8 +213,8 @@
       var y = A.tipY - A.dir * A.H * (1 - c);
       pts.push([x, y]);
     }
-    var top = CROWN + 16;
-    var bot = CROWN - 16;
+    var top = CROWN + 12;
+    var bot = CROWN - 6;
     var line = function (p, off) { return p[0].toFixed(1) + ' ' + (p[1] - A.dir * off).toFixed(1); };
     var d = 'M' + line(pts[0], bot);
     for (var j = 1; j < pts.length; j++) d += ' L' + line(pts[j], bot);
@@ -563,7 +563,7 @@
     }
   }
 
-  fetch('data.json', { cache: 'no-cache' })
+  fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
