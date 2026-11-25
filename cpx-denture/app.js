@@ -202,7 +202,7 @@
     var A = arch === 'u' ? UPPER : LOWER;
     var N = 120, raw = [];
     for (var i = 0; i <= N; i++) {
-      var xn = -1 + (2 * i) / N;
+      var xn = -0.985 + (1.97 * i) / N;
       var c = Math.sqrt(Math.max(0, 1 - xn * xn));
       raw.push([CX + A.W * xn, A.tipY - A.dir * A.H * (1 - c)]);
     }
@@ -214,10 +214,8 @@
       tx /= len; ty /= len;
       var nx = A.dir === 1 ? ty : -ty;
       var ny = A.dir === 1 ? -tx : tx;
-      var edge = Math.min(j, N - j) / (0.1 * N);
-      var taper = 0.3 + 0.7 * Math.min(1, Math.max(0, edge));
-      outer.push([raw[j][0] + nx * (CROWN + 15) * taper, raw[j][1] + ny * (CROWN + 15) * taper]);
-      inner.push([raw[j][0] + nx * (CROWN - 9) * taper, raw[j][1] + ny * (CROWN - 9) * taper]);
+      outer.push([raw[j][0] + nx * (CROWN + 18), raw[j][1] + ny * (CROWN + 18)]);
+      inner.push([raw[j][0] + nx * (CROWN - 6), raw[j][1] + ny * (CROWN - 6)]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
