@@ -11,8 +11,8 @@
   var ZOOMS = [1, 1.35, 1.8, 2.4];
 
   var CX = 500;
-  var UPPER = { n: 26, tipY: 300, W: 326, H: 70, dir: 1 };
-  var LOWER = { n: 25, tipY: 350, W: 326, H: 70, dir: -1 };
+  var UPPER = { n: 26, tipY: 300, W: 326, H: 62, dir: 1 };
+  var LOWER = { n: 25, tipY: 350, W: 326, H: 62, dir: -1 };
   var CROWN = 46;
   var SLOTS = [];
   var atSlot = [];
@@ -213,8 +213,8 @@
       var y = A.tipY - A.dir * A.H * (1 - c);
       pts.push([x, y]);
     }
-    var top = CROWN + 17;
-    var bot = CROWN - 30;
+    var top = CROWN + 16;
+    var bot = CROWN - 16;
     var line = function (p, off) { return p[0].toFixed(1) + ' ' + (p[1] - A.dir * off).toFixed(1); };
     var d = 'M' + line(pts[0], bot);
     for (var j = 1; j < pts.length; j++) d += ' L' + line(pts[j], bot);
