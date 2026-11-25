@@ -230,8 +230,8 @@
       tx /= len; ty /= len;
       var nx = A.dir === 1 ? ty : -ty;
       var ny = A.dir === 1 ? -tx : tx;
-      outer.push([raw[j][0] + nx * (CROWN + 14), raw[j][1] + ny * (CROWN + 14)]);
-      inner.push([raw[j][0] + nx * (CROWN - 2), raw[j][1] + ny * (CROWN - 2)]);
+      outer.push([raw[j][0] + nx * (CROWN + 16), raw[j][1] + ny * (CROWN + 16)]);
+      inner.push([raw[j][0] + nx * (CROWN - 6), raw[j][1] + ny * (CROWN - 6)]);
     }
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
@@ -265,7 +265,6 @@
     DATA.topics.forEach(function (t, i) {
       var sl = (t.slot != null && SLOTS[t.slot]) ? t.slot : i;
       while (atSlot[sl] !== undefined) sl++;
-      gums.appendChild(buildCollar(SLOTS[sl]));
       var s = SLOTS[sl];
       var el = buildTooth(t, s, i);
       el._s = s;
