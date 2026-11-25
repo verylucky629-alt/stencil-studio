@@ -11,8 +11,11 @@
   var ZOOMS = [1, 1.35, 1.8, 2.4];
 
   var CX = 500;
-  var UPPER = { n: 26, tipY: 300, W: 344, H: 116, dir: 1 };
-  var LOWER = { n: 25, tipY: 356, W: 344, H: 116, dir: -1 };
+  var UPPER = { n: 26, tipY: 302, W: 330, H: 84, dir: 1 };
+  var LOWER = { n: 25, tipY: 356, W: 330, H: 84, dir: -1 };
+  var CROWN = 46;
+  var SLOTS = [];
+  var atSlot = [];
 
   var $ = function (id) { return document.getElementById(id); };
   var svgNS = 'http://www.w3.org/2000/svg';
@@ -64,9 +67,11 @@
     return { x: x, y: y, rot: rot, pitch: pitch, w: pitch * 0.95 * scale, type: type, k: k };
   }
 
-  function slotOfTopic(i) {
-    if (i < UPPER.n) return archSlot('u', orderUpper[i]);
-    return archSlot('l', orderLower[i - UPPER.n]);
+  function buildSlots() {
+    SLOTS = [];
+    orderUpper.forEach(function (p) { SLOTS.push(archSlot('u', p)); });
+    orderLower.forEach(function (p) { SLOTS.push(archSlot('l', p)); });
+    return SLOTS;
   }
 
   /* ------------------------------------------------------------------ shapes */
@@ -113,7 +118,7 @@
   }
 
   function buildTooth(t, s, idx) {
-    var H = s.type === 'inc' ? 47 : s.type === 'can' ? 48 : s.type === 'pre' ? 43 : 41;
+    var H = s.type === 'inc' ? CROWN + 2 : s.type === 'can' ? CROWN + 3 : s.type === 'pre' ? CROWN - 3 : CROWN - 5;
     var w = s.w;
     var hw = w / 2;
     var g = document.createElementNS(svgNS, 'g');
@@ -208,8 +213,8 @@
       var y = A.tipY - A.dir * A.H * (1 - c);
       pts.push([x, y]);
     }
-    var top = A.dir === 1 ? 82 : 82;
-    var bot = 24;
+    var top = CROWN + 26;
+    var bot = CROWN - 22;
     var line = function (p, off) { return p[0].toFixed(1) + ' ' + (p[1] - A.dir * off).toFixed(1); };
     var d = 'M' + line(pts[0], bot);
     for (var j = 1; j < pts.length; j++) d += ' L' + line(pts[j], bot);
@@ -237,12 +242,18 @@
     gums.appendChild(gl);
 
     teeth = [];
+    atSlot = [];
+    buildSlots();
     DATA.topics.forEach(function (t, i) {
-      var s = slotOfTopic(i);
+      var sl = (t.slot != null && SLOTS[t.slot]) ? t.slot : i;
+      while (atSlot[sl] !== undefined) sl++;
+      var s = SLOTS[sl];
       var el = buildTooth(t, s, i);
       el._s = s;
+      el._slot = sl;
       teethLayer.appendChild(el);
       teeth.push(el);
+      atSlot[sl] = i;
     });
   }
 
@@ -259,11 +270,13 @@
 
   function markNext() {
     if (!DATA) return;
-    var next = -1;
-    for (var i = 0; i < DATA.topics.length; i++) {
-      if (!DATA.topics[i].done) { next = i; break; }
+    var nextIdx = -1;
+    for (var s = 0; s < atSlot.length; s++) {
+      var i = atSlot[s];
+      if (i === undefined) continue;
+      if (!DATA.topics[i].done) { nextIdx = i; break; }
     }
-    teeth.forEach(function (el, i) { el.classList.toggle('next', i === next); });
+    teeth.forEach(function (el, i) { el.classList.toggle('next', i === nextIdx); });
   }
 
   function setFilled(i, on, delay) {
@@ -326,16 +339,17 @@
     paintCounter(0);
 
     var step = 32;
-    for (var i = 0; i < teeth.length; i++) {
-      (function (idx) {
+    var order = atSlot.filter(function (i) { return i !== undefined; });
+    for (var k = 0; k < order.length; k++) {
+      (function (idx, n) {
         later(function () {
           setFilled(idx, true, 0);
-          paintCounter(idx + 1);
-          if (idx === teeth.length - 1) {
+          paintCounter(n + 1);
+          if (n === order.length - 1) {
             later(function () { finishPreview(); }, 2600);
           }
-        }, 120 + idx * step);
-      })(i);
+        }, 120 + k * step);
+      })(order[k], k);
     }
   }
 
@@ -454,7 +468,10 @@
     var ul = $('rows');
     ul.innerHTML = '';
     var nextIdx = -1;
-    for (var i = 0; i < DATA.topics.length; i++) if (!DATA.topics[i].done) { nextIdx = i; break; }
+    for (var s = 0; s < atSlot.length; s++) {
+      var idx = atSlot[s];
+      if (idx !== undefined && !DATA.topics[idx].done) { nextIdx = idx; break; }
+    }
     DATA.topics.forEach(function (t, i) {
       var li = document.createElement('li');
       li.className = 'row' + (t.done ? ' done' : '') + (i === nextIdx ? ' nextrow' : '');

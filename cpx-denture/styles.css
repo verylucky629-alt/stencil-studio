@@ -113,8 +113,8 @@ b{font-weight:700}
 
 /* 빈 소켓 */
 .tooth:not(.filled) .crown{
-  fill:rgba(96,44,52,.20);
-  stroke:#a9747c;stroke-width:1.5;stroke-dasharray:4 4;
+  fill:rgba(255,252,248,.30);
+  stroke:#a9747c;stroke-width:1.5;stroke-dasharray:4 3.5;
   stroke-linejoin:round;filter:none;
 }
 .tooth:not(.filled) .gloss,
