@@ -256,6 +256,20 @@
       outer.push([q.x + q.nx * (CROWN + 20), q.y + q.ny * (CROWN + 20)]);
       inner.push([q.x + q.nx * (CROWN - 2), q.y + q.ny * (CROWN - 2)]);
     }
+    // 마지막 어금니 모서리를 덮도록 양 끝을 조금 늘린다.
+    var a0 = pointAt(arch, 0), a1 = pointAt(arch, 0.006);
+    var b0 = pointAt(arch, 1), b1 = pointAt(arch, 0.994);
+    var ext = function (p, q, sign) {
+      var dx = (q.x - p.x) * sign, dy = (q.y - p.y) * sign;
+      var L = Math.sqrt(dx * dx + dy * dy) || 1;
+      return [dx / L, dy / L];
+    };
+    var e0 = ext(a0, a1, 1), e1 = ext(b0, b1, 1);
+    var grow = 16;
+    outer.unshift([a0.x - e0[0] * grow + a0.nx * (CROWN + 20), a0.y - e0[1] * grow + a0.ny * (CROWN + 20)]);
+    inner.unshift([a0.x - e0[0] * grow + a0.nx * (CROWN - 2), a0.y - e0[1] * grow + a0.ny * (CROWN - 2)]);
+    outer.push([b0.x + e1[0] * grow + b0.nx * (CROWN + 20), b0.y + e1[1] * grow + b0.ny * (CROWN + 20)]);
+    inner.push([b0.x + e1[0] * grow + b0.nx * (CROWN - 2), b0.y + e1[1] * grow + b0.ny * (CROWN - 2)]);
     var pt = function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); };
     var d = 'M' + pt(inner[0]);
     for (var k = 1; k < inner.length; k++) d += ' L' + pt(inner[k]);
@@ -401,7 +415,7 @@
           setFilled(idx, true, 0);
           paintCounter(n + 1);
           if (n === order.length - 1) {
-            later(function () { finishPreview(); }, 20000);
+            later(function () { finishPreview(); }, 2600);
           }
         }, 120 + k * step);
       })(order[k], k);
