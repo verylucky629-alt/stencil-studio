@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" type="image/png" href="./icon-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="stylesheet" href="./style.css?v=6">
+<link rel="stylesheet" href="./style.css?v=7">
 <script>window.__errs=[];window.addEventListener('error',function(e){try{window.__errs.push(String((e&&e.message)||e))}catch(_){}});</script>
 </head>
 <body>
@@ -276,12 +276,13 @@
   <section class="card today">
     <div class="goalRow">
       <div class="goalMl"><span id="mlNow">0</span><small>ml</small></div>
-      <div class="goalOf">/ 1,500 ml</div>
+      <div class="goalOf">/ <span id="goalTotal">1,500</span> ml</div>
       <div class="goalPct" id="goalPct">0%</div>
     </div>
     <div class="bar">
       <div class="barFill" id="barFill"><span class="barShine"></span></div>
     </div>
+    <p class="cafBonusNote" id="cafBonusNote"></p>
     <div class="stats">
       <div class="stat"><b id="streakVal">0</b><span>연속 일수</span></div>
       <div class="stat"><b id="cupVal">0</b><span>오늘 컵</span></div>
@@ -296,12 +297,19 @@
     </div>
     <div class="quests" id="questList"></div>
 
-    <div class="coffeeBox" id="coffeeBox">
-      <button class="coffeeBtn" id="coffeeBtn" type="button">
-        <span class="qIcon">☕</span>
-        <span class="qMain"><b>커피 마셨어요</b><small>탈수 디버프가 걸려요. 다음 맹물 한 잔이면 해제!</small></span>
-        <span class="qXp debuffXp" id="debuffCount">+0</span>
-      </button>
+    <div class="caffeineBox" id="caffeineBox">
+      <div class="cafHead">
+        <div class="cafTitle"><span>☕</span> 카페인 기록 <small id="cafTotal">오늘 0mg</small></div>
+        <span class="cafDebuff" id="debuffCount">디버프 없음</span>
+      </div>
+      <div class="cafPresets" id="cafPresets"></div>
+      <div class="cafCustom">
+        <input class="cafInput" id="cafInput" type="number" inputmode="numeric" min="1" max="1000" step="5" placeholder="직접 mg 입력" aria-label="카페인 mg 직접 입력">
+        <button class="cafAdd" id="cafAdd" type="button">기록</button>
+      </div>
+      <p class="cafGuide" id="cafGuide">카페인을 기록하면 오늘 목표에 더할 물 양을 계산해요.</p>
+      <p class="cafTip">보통 하루 300mg 이하에서는 큰 이뇨 탈수가 없어요. 그래도 이 챌린지에서는 수분을 넉넉히 채우도록 카페인 100mg당 물 150ml를 더 권장해요.</p>
+      <ul class="cafLog" id="cafLog"></ul>
     </div>
 
     <button class="undoBtn" id="undoBtn" type="button" disabled>↩︎ 방금 한 컵 되돌리기</button>
@@ -324,7 +332,7 @@
     <div class="badgeGrid" id="badgeGrid"></div>
   </section>
 
-  <p class="footNote">하루 목표 1,500ml. 목마름은 이미 늦은 신호라서, 시간표로 마시는 게 이 챌린지의 전부예요.</p>
+  <p class="footNote">하루 목표 1,500ml, 카페인을 마셨다면 100mg당 150ml를 더해요. 목마름은 이미 늦은 신호라서, 시간표로 마시는 게 이 챌린지의 전부예요.</p>
   <p class="syncNote" id="syncNote">동기화 대기 중</p>
 </main>
 
@@ -340,6 +348,6 @@
 
 <div class="toastWrap" id="toastWrap" aria-live="polite"></div>
 
-<script src="./app.js?v=6"></script>
+<script src="./app.js?v=7"></script>
 </body>
 </html>

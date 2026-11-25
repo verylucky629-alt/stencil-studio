@@ -10,9 +10,11 @@
   "coffeeDebuff": 0,
   "coffees": 0,
   "coffeeClears": 0,
+  "caffeineMg": 0,
+  "caffeineLog": [],
   "freeCups": 0,
   "completedQuests": [],
   "history": {},
   "badges": [],
-  "updatedAt": "2026-11-24T22:22:10+09:00"
+  "updatedAt": "2026-11-25T11:30:00+09:00"
 }

@@ -6,6 +6,7 @@
   'use strict';
 
   var GOAL = 1500;
+  var CAF_ML_PER_100MG = 150; // 카페인 100mg당 추가 권장 수분량(ml)
   var KST = 'Asia/Seoul';
   var STATE_KEY = 'hydroGecko:state:v2';
   var SETTINGS_KEY = 'hydroGecko:settings:v1';
@@ -16,6 +17,13 @@
     { id: 'afternoon',time: '17:00', name: '오후 버프',      ml: 300, xp: 15, icon: '⚡️', sub: '집중력 충전 타임' },
     { id: 'night',    time: '20:30', name: '나이트 한 모금', ml: 200, xp: 10, icon: '🌙', sub: '잠들기 전 수분' },
     { id: 'free',     time: '수시로', name: '자유 한 컵',    ml: 150, xp: 10, icon: '🥤', sub: '언제든 한 잔 더', repeat: true }
+  ];
+
+  var CAFFEINE_PRESETS = [
+    { id: 'americano', name: '아메리카노',      mg: 150, icon: '☕' },
+    { id: 'latte',     name: '에스프레소 / 라떼', mg: 75,  icon: '🥛' },
+    { id: 'energy',    name: '에너지드링크',    mg: 100, icon: '⚡' },
+    { id: 'greentea',  name: '녹차',            mg: 30,  icon: '🍵' }
   ];
 
   var LEVELS = [
@@ -103,10 +111,10 @@
       Object.keys(s.history).forEach(function (k) {
         var h = s.history[k] || {};
         if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
-        hist[k] = { ml: num(h.ml), xp: num(h.xp), goal: !!h.goal, q: num(h.q) };
+        hist[k] = { ml: num(h.ml), xp: num(h.xp), goal: !!h.goal, q: num(h.q), caf: Math.max(0, Math.round(num(h.caf))) };
       });
     }
-    return {
+    var out = {
       xp: num(s.xp),
       todayMl: num(s.todayMl),
       todayXp: num(s.todayXp),
@@ -119,6 +127,8 @@
       coffees: num(s.coffees),
       coffeeClears: num(s.coffeeClears),
       nightSips: num(s.nightSips),
+      caffeineMg: Math.max(0, Math.round(num(s.caffeineMg))),
+      caffeineLog: normalizeLog(s.caffeineLog),
       completedQuests: Array.isArray(s.completedQuests) ? s.completedQuests.filter(function (x) { return typeof x === 'string'; }) : [],
       freeCups: num(s.freeCups),
       totalMl: num(s.totalMl),
@@ -126,12 +136,31 @@
       badges: Array.isArray(s.badges) ? s.badges.filter(function (x) { return typeof x === 'string'; }) : [],
       updatedAt: typeof s.updatedAt === 'string' ? s.updatedAt : null
     };
+    // 오늘 것이 아닌 카페인 기록은 버린다(과거 값은 history.caf에 남는다)
+    out.caffeineLog = out.caffeineLog.filter(function (x) { return x.day === out.lastDate; });
+    return out;
+  }
+
+  function normalizeLog(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.filter(function (x) {
+      return x && typeof x === 'object' && num(x.mg) > 0;
+    }).map(function (x) {
+      return {
+        id: typeof x.id === 'string' && x.id ? x.id : 'c' + Math.random().toString(36).slice(2, 9),
+        name: typeof x.name === 'string' && x.name ? x.name.slice(0, 24) : '카페인',
+        mg: Math.min(1000, Math.round(num(x.mg))),
+        day: /^\d{4}-\d{2}-\d{2}$/.test(x.day) ? x.day : '',
+        at: typeof x.at === 'string' ? x.at : ''
+      };
+    });
   }
 
   function blankState() {
     return normalize({
       xp: 0, todayMl: 0, todayXp: 0, streak: 0, bestStreak: 0, lastDate: dayKey(),
-      coffeeDebuff: 0, completedQuests: [], freeCups: 0, history: {}, badges: [], updatedAt: kstIso()
+      coffeeDebuff: 0, completedQuests: [], freeCups: 0, history: {}, badges: [],
+      caffeineMg: 0, caffeineLog: [], updatedAt: kstIso()
     });
   }
 
@@ -165,6 +194,9 @@
     return LEVELS[0];
   }
   function isGoalDone() { return !!state.history[state.lastDate] && !!state.history[state.lastDate].goal; }
+  function caffeineCorrection(mg) { return Math.round(Math.max(0, num(mg)) * CAF_ML_PER_100MG / 100); }
+  function caffeineBonus() { return caffeineCorrection(state.caffeineMg); }
+  function todayGoal() { return GOAL + caffeineBonus(); }
 
   /* ---------------- day rollover ---------------- */
   function rollover() {
@@ -180,6 +212,8 @@
     state.completedQuests = [];
     state.freeCups = 0;
     state.coffeeDebuff = 0;
+    state.caffeineMg = 0;
+    state.caffeineLog = [];
     undoStack = [];
     saveLocal();
     return true;
@@ -192,13 +226,14 @@
     h.ml = state.todayMl;
     h.xp = state.todayXp;
     h.q = state.completedQuests.length;
+    h.caf = state.caffeineMg;
     state.history[k] = h;
     if (!state.firstDate || k < state.firstDate) state.firstDate = k;
   }
 
   function completeGoalIfReached() {
     var h = state.history[state.lastDate];
-    if (!h || h.goal || state.todayMl < GOAL) return false;
+    if (!h || h.goal || state.todayMl < todayGoal()) return false;
     h.goal = true;
     var y = addDays(state.lastDate, -1);
     state.streak = (state.lastGoalDate === y) ? (state.streak + 1) : 1;
@@ -252,7 +287,7 @@
       if (goalMade && afterLv.lv > before) {
         setTimeout(function () {
           sfx.level();
-          showOverlay('🎉', '목표 달성 + LEVEL UP', '1,500ml 완주, ' + state.streak + '일 연속. 이제 ' + afterLv.name + ' 등극!');
+          showOverlay('🎉', '목표 달성 + LEVEL UP', comma(todayGoal()) + 'ml 완주, ' + state.streak + '일 연속. 이제 ' + afterLv.name + ' 등극!');
           burst(400);
           toast('🔥 ' + state.streak + '일 연속 달성!', 'gold');
         }, 420);
@@ -265,27 +300,51 @@
     return { ml: q.ml, xp: gained };
   }
 
-  function drinkCoffee() {
+  function recordCaffeine(mg, name) {
     rollover();
-    if (state.coffeeDebuff >= 3) {
-      toast('디버프가 이미 3개예요. 맹물 한 잔부터!');
-      return;
-    }
-    state.coffeeDebuff += 1;
+    mg = Math.round(num(mg));
+    if (!(mg > 0)) { toast('카페인 양을 mg으로 입력해 주세요'); return null; }
+    if (mg > 1000) { toast('한 번에는 1,000mg까지만 기록할 수 있어요'); return null; }
+
+    var bonus = caffeineCorrection(mg);
+    var label = name || '카페인';
+    var id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 1000);
+
+    state.caffeineMg += mg;
+    state.caffeineLog.push({ id: id, name: label, mg: mg, day: state.lastDate, at: kstIso() });
+    if (state.caffeineLog.length > 30) state.caffeineLog = state.caffeineLog.slice(-30);
     state.coffees += 1;
-    undoStack.push({ type: 'coffee' });
+
+    var debuff = 0;
+    if (state.coffeeDebuff < 3) { state.coffeeDebuff += 1; debuff = 1; }
+
+    undoStack.push({ type: 'caffeine', id: id, mg: mg, debuff: debuff, name: label });
     if (undoStack.length > 20) undoStack.shift();
+
+    writeToday();
     saveLocal();
     render();
-    toast('☕ 탈수 디버프 +1, 다음 맹물 한 잔이면 +20 XP');
+
+    say('카페인 ' + comma(mg) + 'mg → 물 ' + comma(bonus) + 'ml 더!');
     sfx.pop();
+    toast('☕ ' + label + ' ' + comma(mg) + 'mg  → 물 +' + comma(bonus) + 'ml  (목표 ' + comma(todayGoal()) + 'ml)', 'gold');
+    if (debuff === 0) setTimeout(function () { toast('디버프는 3개까지예요. 물 한 잔으로 하나씩 지워요'); }, 700);
+    if (state.caffeineMg > 400) setTimeout(function () { toast('오늘 카페인 400mg을 넘었어요. 물 한 잔 먼저!'); }, 1400);
+    return { mg: mg, bonus: bonus };
   }
 
   function undo() {
     rollover();
     var a = undoStack.pop();
     if (!a) return;
-    if (a.type === 'coffee') {
+    if (a.type === 'caffeine') {
+      state.caffeineMg = Math.max(0, state.caffeineMg - a.mg);
+      state.caffeineLog = state.caffeineLog.filter(function (x) { return x.id !== a.id; });
+      state.coffees = Math.max(0, state.coffees - 1);
+      if (a.debuff) state.coffeeDebuff = Math.max(0, state.coffeeDebuff - a.debuff);
+      writeToday();
+      toast('카페인 ' + comma(a.mg) + 'mg 기록을 되돌렸어요');
+    } else if (a.type === 'coffee') {
       state.coffeeDebuff = Math.max(0, state.coffeeDebuff - 1);
       state.coffees = Math.max(0, state.coffees - 1);
     } else {
@@ -299,7 +358,7 @@
       var h = state.history[state.lastDate];
       if (h) {
         h.ml = state.todayMl; h.xp = state.todayXp; h.q = state.completedQuests.length;
-        if (h.goal && state.todayMl < GOAL) {
+        if (h.goal && state.todayMl < todayGoal()) {
           h.goal = false;
           if (state.lastGoalDate === state.lastDate) {
             state.lastGoalDate = null;
@@ -318,14 +377,22 @@
     Object.keys(remoteHist || {}).forEach(function (k) {
       var r = remoteHist[k];
       var l = target[k];
-      if (!l) { target[k] = { ml: r.ml, xp: r.xp, goal: r.goal, q: r.q }; return; }
+      if (!l) { target[k] = { ml: r.ml, xp: r.xp, goal: r.goal, q: r.q, caf: r.caf || 0 }; return; }
       target[k] = {
         ml: Math.max(l.ml, r.ml),
         xp: Math.max(l.xp, r.xp),
         goal: !!(l.goal || r.goal),
-        q: Math.max(l.q, r.q)
+        q: Math.max(l.q, r.q),
+        caf: Math.max(num(l.caf), num(r.caf))
       };
     });
+  }
+  function mergeLogs(a, b) {
+    var out = a.slice();
+    var seen = {};
+    out.forEach(function (x) { seen[x.id] = 1; });
+    b.forEach(function (x) { if (!seen[x.id]) { seen[x.id] = 1; out.push(x); } });
+    return out;
   }
   function union(a, b) {
     var set = {};
@@ -356,6 +423,8 @@
       state.todayXp = Math.max(state.todayXp, r.todayXp);
       state.coffeeDebuff = Math.max(state.coffeeDebuff, r.coffeeDebuff);
       state.freeCups = Math.max(state.freeCups, r.freeCups);
+      state.caffeineMg = Math.max(state.caffeineMg, r.caffeineMg);
+      state.caffeineLog = mergeLogs(state.caffeineLog, r.caffeineLog);
       state.completedQuests = union(state.completedQuests, r.completedQuests);
       state.streak = Math.max(state.streak, r.streak);
       if (r.lastGoalDate && (!state.lastGoalDate || r.lastGoalDate > state.lastGoalDate)) state.lastGoalDate = r.lastGoalDate;
@@ -368,6 +437,8 @@
       state.completedQuests = r.completedQuests.slice();
       state.freeCups = r.freeCups;
       state.coffeeDebuff = r.coffeeDebuff;
+      state.caffeineMg = r.caffeineMg;
+      state.caffeineLog = r.caffeineLog.slice();
       state.streak = Math.max(state.streak, r.streak);
       if (r.lastGoalDate) state.lastGoalDate = r.lastGoalDate;
       undoStack = [];
@@ -556,7 +627,7 @@
 
   function celebrateGoal() {
     sfx.stamp();
-    showOverlay('🏅', '오늘 목표 달성!', '1,500ml 완주. ' + state.streak + '일 연속 기록 중이에요.');
+    showOverlay('🏅', '오늘 목표 달성!', comma(todayGoal()) + 'ml 완주. ' + state.streak + '일 연속 기록 중이에요.');
     setTimeout(function () { toast('🔥 ' + state.streak + '일 연속 달성!', 'gold'); }, 620);
   }
   function celebrateLevel(lv) {
@@ -595,9 +666,11 @@
     document.getElementById('xpFill').style.width = pct.toFixed(1) + '%';
 
     var ml = state.todayMl;
+    var goal = todayGoal();
     document.getElementById('mlNow').textContent = comma(ml);
-    document.getElementById('goalPct').textContent = Math.round(Math.min(100, (ml / GOAL) * 100)) + '%';
-    document.getElementById('barFill').style.width = Math.max(0, Math.min(100, (ml / GOAL) * 100)).toFixed(1) + '%';
+    document.getElementById('goalTotal').textContent = comma(goal);
+    document.getElementById('goalPct').textContent = Math.round(Math.min(100, (ml / goal) * 100)) + '%';
+    document.getElementById('barFill').style.width = Math.max(0, Math.min(100, (ml / goal) * 100)).toFixed(1) + '%';
     document.getElementById('streakVal').textContent = state.streak;
     document.getElementById('cupVal').textContent = state.completedQuests.length + state.freeCups;
     document.getElementById('xpVal').textContent = comma(state.xp);
@@ -605,6 +678,7 @@
     renderQuests();
     renderStamps();
     renderBadges();
+    renderCaffeine();
 
     document.getElementById('undoBtn').disabled = undoStack.length === 0;
     document.getElementById('soundBtn').textContent = settings.sound === false ? '🔇' : '🔊';
@@ -637,10 +711,73 @@
       box.appendChild(btn);
     });
     document.getElementById('questHint').textContent = state.completedQuests.length + ' / 4';
+  }
 
-    var debuff = document.getElementById('debuffCount');
-    debuff.textContent = state.coffeeDebuff > 0 ? '디버프 ' + state.coffeeDebuff : '없음';
-    document.getElementById('coffeeBox').firstElementChild.classList.toggle('armed', state.coffeeDebuff > 0);
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderCaffeine() {
+    var mg = state.caffeineMg;
+    var bonus = caffeineBonus();
+
+    var total = document.getElementById('cafTotal');
+    if (total) total.textContent = '오늘 ' + comma(mg) + 'mg';
+
+    var guide = document.getElementById('cafGuide');
+    if (guide) {
+      guide.textContent = mg > 0
+        ? '카페인 ' + comma(mg) + 'mg 섭취 → 물 ' + comma(bonus) + 'ml 더 마시기!'
+        : '카페인을 기록하면 오늘 목표에 더할 물 양을 계산해요.';
+    }
+
+    var chip = document.getElementById('debuffCount');
+    if (chip) {
+      chip.textContent = state.coffeeDebuff > 0
+        ? '디버프 ' + state.coffeeDebuff + ' · 다음 물 +20 XP'
+        : '디버프 없음';
+      chip.classList.toggle('armed', state.coffeeDebuff > 0);
+    }
+
+    var note = document.getElementById('cafBonusNote');
+    if (note) {
+      if (bonus > 0) {
+        note.textContent = '☕ 카페인 ' + comma(mg) + 'mg 보정  목표 +' + comma(bonus) + 'ml';
+        note.classList.add('on');
+      } else {
+        note.textContent = '';
+        note.classList.remove('on');
+      }
+    }
+
+    var box = document.getElementById('cafLog');
+    if (!box) return;
+    box.innerHTML = '';
+    state.caffeineLog.slice(-5).reverse().forEach(function (it) {
+      var li = document.createElement('li');
+      var time = it.at && it.at.length >= 16 ? it.at.slice(11, 16) : '';
+      li.innerHTML = '<span>' + escapeHtml(it.name) + ' ' + comma(it.mg) + 'mg</span>' +
+        '<span class="lgMg">+' + comma(caffeineCorrection(it.mg)) + 'ml' + (time ? '  ' + time : '') + '</span>';
+      box.appendChild(li);
+    });
+  }
+
+  function buildCaffeinePresets() {
+    var box = document.getElementById('cafPresets');
+    if (!box) return;
+    box.innerHTML = '';
+    CAFFEINE_PRESETS.forEach(function (p) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cafPreset';
+      btn.setAttribute('data-caf', p.id);
+      btn.innerHTML = '<span class="cpIcon">' + p.icon + '</span>' +
+        '<span class="cpMain"><b>' + p.name + '</b><small>' + p.mg + 'mg · +' + caffeineCorrection(p.mg) + 'ml</small></span>';
+      btn.addEventListener('click', function () { recordCaffeine(p.mg, p.name); });
+      box.appendChild(btn);
+    });
   }
 
   function renderStamps() {
@@ -745,7 +882,20 @@
 
   /* ---------------- wiring ---------------- */
   function bind() {
-    document.getElementById('coffeeBtn').addEventListener('click', drinkCoffee);
+    buildCaffeinePresets();
+    var cafInput = document.getElementById('cafInput');
+    var cafAdd = document.getElementById('cafAdd');
+    function submitCaffeine() {
+      var v = parseInt(String(cafInput.value).replace(/[^0-9]/g, ''), 10);
+      var r = recordCaffeine(v, '직접 입력');
+      if (r) cafInput.value = '';
+    }
+    if (cafAdd) cafAdd.addEventListener('click', submitCaffeine);
+    if (cafInput) {
+      cafInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitCaffeine(); }
+      });
+    }
     document.getElementById('undoBtn').addEventListener('click', undo);
     document.getElementById('overlayBtn').addEventListener('click', hideOverlay);
     document.getElementById('overlay').addEventListener('click', function (e) {
@@ -790,6 +940,9 @@
       getState: function () { return JSON.parse(JSON.stringify(state)); },
       getLevel: function () { return levelFor(state.xp); },
       addWater: function (id) { var q = QUESTS.filter(function (x) { return x.id === id; })[0]; return addWater(q, true); },
+      addCaffeine: function (mg, name) { return recordCaffeine(mg, name || '검증'); },
+      undo: function () { return undo(); },
+      getGoal: function () { return { base: GOAL, bonus: caffeineBonus(), total: todayGoal() }; },
       sync: function () { return fetchRemote(true); },
       preview: function (emoji, title, sub) { showOverlay(emoji || '🎉', title || '미리보기', sub || ''); }
     };
